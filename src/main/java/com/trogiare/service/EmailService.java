@@ -16,14 +16,19 @@ import org.springframework.stereotype.Service;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 // Annotation
 @Service
 // Class
 // Implementing EmailService interface
 public class EmailService {
+    private static Map<String, EmailTemplate> map = new HashMap<>();
+    private final String URI_CONFIRM_EMAIL = "/confirm";
     @Autowired
     private JavaMailSender mailSender;
     @Autowired
@@ -32,19 +37,17 @@ public class EmailService {
     private ServerProperties props;
     @Value("${spring.mail.username}")
     private String sender;
-    private final String URI_CONFIRM_EMAIL = "/confirm";
 
-
-    public void verifyEmail(User user,String token) throws MessagingException, URISyntaxException {
+    public void sendVerifyingReq(User user, String token) throws MessagingException, URISyntaxException {
         Map<String, String> param = new HashMap<>();
-        param.put("token",token);
-        String uripath = props.getURIPath(URI_CONFIRM_EMAIL,param);
+        param.put("token", token);
+        String uripath = props.getURIPath(URI_CONFIRM_EMAIL, param);
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
         Map<String, String> query = new HashMap<>();
         query.put("userName", user.getFirstName());
-        query.put("verify",uripath);
-        EmailTemplate emailTemplate = handleTemplateEmail(query,MailTemplateEnum.EMAIL_VERIFYING);
+        query.put("verify", uripath);
+        EmailTemplate emailTemplate = handleTemplateEmail(query, MailTemplateEnum.EMAIL_VERIFYING);
         helper.setText(emailTemplate.getContent(), true); // Use this or above line.
         helper.setFrom(sender);
         helper.setTo(user.getEmail());
@@ -52,19 +55,55 @@ public class EmailService {
         mailSender.send(mimeMessage);
     }
 
+    public void sendWelcomeMember(User user) throws MessagingException {
+        Map<String, String> query = new HashMap<>();
+        query.put("userName", user.getFirstName());
+        EmailTemplate emailTemplate = handleTemplateEmail(query, MailTemplateEnum.EMAIL_VERIFYING);
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+        helper.setText(emailTemplate.getContent(), true); // Use this or above line.
+        helper.setFrom(sender);
+        helper.setTo(user.getEmail());
+        helper.setSubject(emailTemplate.getSubject());
+        mailSender.send(mimeMessage);
+    }
+
+    public void sendForgotPassword(User user, String otp) throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+        Map<String, String> query = new HashMap<>();
+        query.put("userName", user.getFirstName());
+        query.put("verify", otp);
+        EmailTemplate emailTemplate = handleTemplateEmail(query, MailTemplateEnum.FORGOT_PASSWORD);
+        helper.setText(emailTemplate.getContent(), true); // Use this or above line.
+        helper.setFrom(sender);
+        helper.setTo(user.getEmail());
+        helper.setSubject(emailTemplate.getSubject());
+        mailSender.send(mimeMessage);
+
+    }
+
     public EmailTemplate handleTemplateEmail(Map<String, String> information, MailTemplateEnum mailTemplateEnum) {
-        Optional<EmailTemplate> emailTemplateOP = emailTemplateRepo.findByCode(mailTemplateEnum.name());
-        EmailTemplate emailTemplate;
-        if (emailTemplateOP.isPresent()) {
-            emailTemplate = emailTemplateOP.get();
-            String emailContent = emailTemplate.getContent();
-            for (var x : information.entrySet()) {
-                emailContent = emailContent.replace("${" +x.getKey() + "}", x.getValue());
-            }
-            emailTemplate.setContent(emailContent);
-            return emailTemplate;
+        EmailTemplate emailTemplate = getEmailTemplate(mailTemplateEnum.name());
+        if (emailTemplate == null) {
+            return null;
         }
-        return null;
+        String emailContent = emailTemplate.getContent();
+        for (var x : information.entrySet()) {
+            emailContent = emailContent.replace("${" + x.getKey() + "}", x.getValue());
+        }
+        emailTemplate.setContent(emailContent);
+        return emailTemplate;
+    }
+
+    public EmailTemplate getEmailTemplate(String typeEmailTemplate) {
+        if (map.size() > 0 && !map.isEmpty()) {
+          return  map.get(typeEmailTemplate);
+        }
+        List<EmailTemplate> emailTemplateList = emailTemplateRepo.findAll();
+        map = emailTemplateList.stream()
+                .collect(Collectors.toMap(EmailTemplate::getType, Function.identity()));
+        return map.get(typeEmailTemplate);
     }
 
 

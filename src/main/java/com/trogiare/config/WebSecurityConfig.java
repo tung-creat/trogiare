@@ -34,7 +34,9 @@ public class WebSecurityConfig {
                         "/api/v1/auth/**",
                         "/logout/**",
                         "/api/v1/reg/**",
-                        "/api/v1/file/**").permitAll()
+                        "/api/v1/file/**",
+                        "/api/v1/socks/**"
+                        ).permitAll()
                 .requestMatchers("/swagger-resources/**",
                         "/webjars/**",
                         "/swagger-ui.html",

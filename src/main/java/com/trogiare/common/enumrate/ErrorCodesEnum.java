@@ -7,6 +7,19 @@ public enum ErrorCodesEnum {
     REPASSWORD_NOT_EQUALS_PASSWORD("Repassword not equals passsword"),
     EMAIL_EXIST("Email exist"),
     SDT_EXIST("Sdt exist"),
+    INVALID_TOKEN("invalid token"),
+    FIND_NOT_FOUND("Not found email"),
+    TOKEN_EXPIRED("Token is expired"),
+    AUTHENTICATION_REQUEST_EXCEEDED("AUTHENTICATION REQUEST EXCEEDED"),
+    EMAIL_NOT_VERIFIED("email not verified"),
+    INFORMATION_USER_NOT_VALID("Thông tin tài khoản hoặc mật khẩu không chính xác"),
+    ACCOUNT_NOT_ACTIVATED("Tài khoản chưa được kích hoạt"),
+    EMAIL_DOES_NOT_EXISTED("EMAIL_DOES_NOT_EXISTED"),
+    INVALID_INPUT_PARAMETER("INVALID_INPUT_PARAMETER"),
+    ACCOUNT_NOT_EXIST("Tài khoản không tồn tại"),
+    INVALID_INPUT("invalid input"),
+    INVALID_UID("invalid uid"),
+    ACCESS_DENIED("access denied"),
     USERNAME_EXIST("Username exist");
 
     private final String desc;

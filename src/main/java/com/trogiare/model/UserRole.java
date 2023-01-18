@@ -6,12 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.io.Serializable;
+
 @Entity
 @Data
 @Table(name="user_role")
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserRole {
+public class UserRole implements Serializable {
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid")

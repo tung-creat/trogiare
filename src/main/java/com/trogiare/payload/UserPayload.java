@@ -22,7 +22,6 @@ public class UserPayload {
     @Email
     private String email;
     @Pattern(regexp = "(^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\\s\\./0-9]*$)|([\\s]*)", message = "Invalid phone number")
-    String phone;
     private String sdt;
     @NotBlank(message = "invalid password")
     private String password;

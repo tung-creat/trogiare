@@ -33,6 +33,12 @@ public class MessageResp  implements Serializable {
         messageResp.setResult(result);
         return messageResp;
     }
+    public static MessageResp ok(){
+        MessageResp messageResp = new MessageResp();
+        messageResp.setResponseCode(SUCCESS);
+        messageResp.setResponseDesc("");
+        return messageResp;
+    }
     public static MessageResp ok(Object object){
         MessageResp messageResp = new MessageResp();
         messageResp.setResponseCode(SUCCESS);
@@ -46,5 +52,11 @@ public class MessageResp  implements Serializable {
         messageResp.setResponseDesc(errorCodesEnum.toString());
         return messageResp;
 
+    }
+    public static  MessageResp error(String codeError,String desc){
+        MessageResp messageResp = new MessageResp();
+        messageResp.setResponseCode(codeError);
+        messageResp.setResponseDesc(desc);
+        return messageResp;
     }
 }

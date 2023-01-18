@@ -7,13 +7,14 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.cglib.core.Local;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name="user_token")
 @Getter
 @Setter
-public class UserToken {
+public class UserToken implements Serializable {
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid")
