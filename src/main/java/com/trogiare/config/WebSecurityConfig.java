@@ -68,7 +68,6 @@ public class WebSecurityConfig {
                         "/v2/api-docs").permitAll()
                 .requestMatchers("/api/v1/**").authenticated()
         ;
-        http.addFilterBefore(localTokenAuth, UsernamePasswordAuthenticationFilter.class);
 
 
         return http.build();
