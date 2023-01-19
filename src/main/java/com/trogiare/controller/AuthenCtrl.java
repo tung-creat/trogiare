@@ -51,7 +51,7 @@ public class AuthenCtrl {
         if(!passwordEncoder.matches(payload.getPassword(),user.getPassword())){
             throw new BadRequestException(ErrorCodesEnum.INFORMATION_USER_NOT_VALID);
         }
-        if(!user.getStatus().equals(UserStatusEnum.ACTIVATED)){
+        if(!user.getStatus().equals(UserStatusEnum.ACTIVATED.name())){
             throw new BadRequestException(ErrorCodesEnum.ACCOUNT_NOT_ACTIVATED);
         }
         List<UserRole> userRole =userRoleRepo.findByUserId(user.getId());

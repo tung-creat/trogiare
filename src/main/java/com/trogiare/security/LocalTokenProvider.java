@@ -31,7 +31,7 @@ public class LocalTokenProvider {
         Gson gson = new Gson();
         TokenObject tokenObject = new TokenObject();
         tokenObject.setUserName(user.getUserName());
-        tokenObject.setFullName(user.getFirstName() + " " + user.getLastName());
+        tokenObject.setFirstName(user.getFirstName());
         tokenObject.setRoles(roles);
         String sub = gson.toJson(tokenObject);
         return Jwts.builder()

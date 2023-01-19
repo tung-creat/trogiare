@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.trogiare.common.enumrate.ErrorCodesEnum;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.domain.Page;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -44,6 +45,14 @@ public class MessageResp  implements Serializable {
         messageResp.setResponseCode(SUCCESS);
         messageResp.setResponseDesc("");
         messageResp.setResult(object);
+        return messageResp;
+    }
+    public static MessageResp page(Page page){
+        MessageResp messageResp = new MessageResp();
+        messageResp.setResult(page.getContent());
+        messageResp.setPage(page.getNumber());
+        messageResp.setSize(page.getSize());
+        messageResp.setTotal(page.getTotalElements());
         return messageResp;
     }
     public static  MessageResp error(ErrorCodesEnum errorCodesEnum){

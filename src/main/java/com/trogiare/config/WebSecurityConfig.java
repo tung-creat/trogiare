@@ -1,5 +1,6 @@
 package com.trogiare.config;
 
+import com.trogiare.security.LocalTokenAuth;
 import com.trogiare.security.OAuthEntryPointRest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -25,7 +27,8 @@ public class WebSecurityConfig {
     private OAuthEntryPointRest unauthorizedHandler;
     @Value("${app.cors.allow_domain}")
     private String allowedDomain;
-
+    @Autowired
+    private LocalTokenAuth localTokenAuth;
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
@@ -65,6 +68,8 @@ public class WebSecurityConfig {
                         "/v2/api-docs").permitAll()
                 .requestMatchers("/api/v1/**").authenticated()
         ;
+        http.addFilterBefore(localTokenAuth, UsernamePasswordAuthenticationFilter.class);
+
 
         return http.build();
     }

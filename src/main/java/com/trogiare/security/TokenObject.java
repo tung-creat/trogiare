@@ -13,6 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 public class TokenObject {
     String userName;
-    String fullName;
+    String firstName;
     List<UserRole> roles;
 }
