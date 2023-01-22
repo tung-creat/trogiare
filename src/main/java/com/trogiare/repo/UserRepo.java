@@ -14,7 +14,7 @@ public interface UserRepo extends PagingAndSortingRepository<User,String>, ListC
     Optional<User> findByEmailFirt(String email);
     @Query(value="Select * from user u where u.sdt = ?1 limit 1",nativeQuery = true)
     Optional<User> findBySdtFirt(String sdt);
-    @Query(value ="select u from User u where u.userName= ?1 or u.email = ?1 ")
+    @Query(value ="select u from User u where u.username= ?1 or u.email = ?1 ")
     Optional<User> findByUsernameOrEmail(String username);
 
 }

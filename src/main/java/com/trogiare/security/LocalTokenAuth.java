@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,22 +22,26 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+
 @Component
 public class LocalTokenAuth extends OncePerRequestFilter {
     static final Logger logger = LoggerFactory.getLogger(LocalTokenAuth.class);
     @Autowired
     private LocalTokenProvider tokenProvider;
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         try {
+            if(request.getHeader("Authorization") == null ||request.getHeader("Authorization").isEmpty() ){
+                filterChain.doFilter(request,response);
+            }
             String token = TokenUtil.getTokenFrom(request);
             if (ValidateUtil.isEmpty(token)) {
                 logger.info("JWT is empty");
@@ -61,14 +66,14 @@ public class LocalTokenAuth extends OncePerRequestFilter {
             Gson gson = new Gson();
             TokenObject tokenObject = gson.fromJson(sub, TokenObject.class);
             for (UserRole r : tokenObject.getRoles()) {
-               if(r== null){
-                   continue;
-               }
+                if (r == null) {
+                    continue;
+                }
                 authorities.add(new SimpleGrantedAuthority(r.getRoleName()));
             }
             UserPrincipal userDetails = new UserPrincipal();
             userDetails.setId(claims.getId());
-            userDetails.setUserName(tokenObject.getUserName());
+            userDetails.setUsername(tokenObject.getUserName());
             userDetails.setFirstName(tokenObject.getFirstName());
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails,
@@ -80,6 +85,9 @@ public class LocalTokenAuth extends OncePerRequestFilter {
         }
         filterChain.doFilter(request, response);
     }
+
+
+
     private void returnUnauthorized(HttpServletRequest request, HttpServletResponse response, String messageDetail) {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         try {
@@ -93,10 +101,9 @@ public class LocalTokenAuth extends OncePerRequestFilter {
             unauthorizedResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
             out.print(new Gson().toJson(unauthorizedResponse));
             out.flush();
+            out.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
-
-
 }

@@ -6,8 +6,11 @@ import com.trogiare.model.User;
 import com.trogiare.repo.UserRepo;
 import com.trogiare.respone.MessageResp;
 import com.trogiare.respone.UserResp;
+import com.trogiare.security.UserPrincipal;
 import com.trogiare.service.EmailService;
+import com.trogiare.utils.UserUtil;
 import com.trogiare.utils.ValidateUtil;
+import jakarta.annotation.security.RolesAllowed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +20,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,10 +42,11 @@ public class UserCtrl {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
     @RequestMapping(path = "", method = RequestMethod.GET)
     public HttpEntity<Object> getAll(@RequestParam(required = false) Integer page,
                                      @RequestParam(required = false) Integer size) {
+        logger.info(String.valueOf(UserUtil.getAuth().getAuthorities()));
+
         if (page == null || page <= 0) {
             page = 0;
         }

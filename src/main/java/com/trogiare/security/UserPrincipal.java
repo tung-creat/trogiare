@@ -1,12 +1,15 @@
 package com.trogiare.security;
 
 import com.trogiare.model.User;
+import lombok.Getter;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
 @SuppressWarnings("serial")
+@ToString
 public class UserPrincipal extends User implements UserDetails {
 
     public UserPrincipal() {
@@ -18,10 +21,6 @@ public class UserPrincipal extends User implements UserDetails {
         return null;
     }
 
-    @Override
-    public String getUsername() {
-        return null;
-    }
 
 
     @Override

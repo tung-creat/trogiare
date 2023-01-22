@@ -9,8 +9,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.BeanIds;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -20,8 +27,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.List;
 
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
-public class WebSecurityConfig {
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
+public class WebSecurityConfig extends GlobalMethodSecurityConfiguration {
+
     static final Logger logger = LoggerFactory.getLogger(WebSecurityConfig.class);
     @Autowired
     private OAuthEntryPointRest unauthorizedHandler;
@@ -29,7 +38,6 @@ public class WebSecurityConfig {
     private String allowedDomain;
     @Autowired
     private LocalTokenAuth localTokenAuth;
-
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
@@ -40,8 +48,11 @@ public class WebSecurityConfig {
         };
     }
 
-
-
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         logger.info("Configuration for http security");
@@ -67,6 +78,8 @@ public class WebSecurityConfig {
                         "/swagger-ui.html",
                         "/v2/api-docs").permitAll()
                 .requestMatchers("/api/v1/**").authenticated()
+                .and()
+                .addFilterBefore(localTokenAuth, UsernamePasswordAuthenticationFilter.class)
         ;
 
 

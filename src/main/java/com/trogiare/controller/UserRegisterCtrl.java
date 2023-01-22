@@ -66,10 +66,10 @@ public class UserRegisterCtrl {
             return ResponseEntity.status(400).body(MessageResp.error(ErrorCodesEnum.EMAIL_EXIST));
         }
         User user = new User();
-        user.setUserName(payload.getUserName());
+        user.setUsername(payload.getUserName());
         user.setCreatedTime(LocalDateTime.now());
         user.setUpdatedTime(LocalDateTime.now());
-        user.setUserName(payload.getUserName());
+        user.setUsername(payload.getUserName());
         user.setEmail(payload.getEmail());
         user.setSdt(payload.getSdt());
         user.setStatus(UserStatusEnum.PENDING.name());

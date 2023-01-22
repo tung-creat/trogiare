@@ -38,7 +38,7 @@ public class UserResp implements Serializable {
         this.id = user.getId();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
-        this.userName = user.getUserName();
+        this.userName = user.getUsername();
         this.email = user.getEmail();
         this.sdt = user.getSdt();
         this.status = user.getStatus();
