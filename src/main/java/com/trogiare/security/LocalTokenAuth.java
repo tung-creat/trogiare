@@ -41,6 +41,7 @@ public class LocalTokenAuth extends OncePerRequestFilter {
         try {
             if(request.getHeader("Authorization") == null ||request.getHeader("Authorization").isEmpty() ){
                 filterChain.doFilter(request,response);
+                return;
             }
             String token = TokenUtil.getTokenFrom(request);
             if (ValidateUtil.isEmpty(token)) {
@@ -84,6 +85,7 @@ public class LocalTokenAuth extends OncePerRequestFilter {
             logger.error("Could not set user authentication in security context(Local)", ex);
         }
         filterChain.doFilter(request, response);
+
     }
 
 
