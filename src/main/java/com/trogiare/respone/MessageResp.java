@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -23,6 +24,7 @@ public class MessageResp  implements Serializable {
     Long total = null;
     Integer size = null;
     Integer page = null;
+    Integer totalPage = null;
     LocalDateTime localDateTime = LocalDateTime.now();
     public MessageResp(){
         super();
@@ -53,6 +55,16 @@ public class MessageResp  implements Serializable {
         messageResp.setPage(page.getNumber());
         messageResp.setSize(page.getSize());
         messageResp.setTotal(page.getTotalElements());
+        messageResp.setTotalPage(page.getTotalPages());
+        return messageResp;
+    }
+    public static MessageResp page(Page page, List listContent){
+        MessageResp messageResp = new MessageResp();
+        messageResp.setResult(listContent);
+        messageResp.setPage(page.getNumber());
+        messageResp.setSize(page.getSize());
+        messageResp.setTotal(page.getTotalElements());
+        messageResp.setTotalPage(page.getTotalPages());
         return messageResp;
     }
     public static  MessageResp error(ErrorCodesEnum errorCodesEnum){

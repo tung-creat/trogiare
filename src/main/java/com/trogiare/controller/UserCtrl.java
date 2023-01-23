@@ -2,6 +2,7 @@ package com.trogiare.controller;
 
 import com.trogiare.common.Constants;
 import com.trogiare.common.enumrate.ErrorCodesEnum;
+import com.trogiare.component.ListRoleUserComponent;
 import com.trogiare.model.User;
 import com.trogiare.repo.UserRepo;
 import com.trogiare.respone.MessageResp;
@@ -11,6 +12,7 @@ import com.trogiare.service.EmailService;
 import com.trogiare.utils.UserUtil;
 import com.trogiare.utils.ValidateUtil;
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +29,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserCtrl {
@@ -41,12 +47,13 @@ public class UserCtrl {
     private EmailService mailSender;
     @Autowired
     PasswordEncoder passwordEncoder;
+    @Autowired
+    private ListRoleUserComponent userRoles;
 
     @RequestMapping(path = "", method = RequestMethod.GET)
     public HttpEntity<Object> getAll(@RequestParam(required = false) Integer page,
                                      @RequestParam(required = false) Integer size) {
-        logger.info(String.valueOf(UserUtil.getAuth().getAuthorities()));
-
+        UserUtil.checkAuthorize("ADMIN");
         if (page == null || page <= 0) {
             page = 0;
         }
@@ -55,8 +62,16 @@ public class UserCtrl {
         }
         Pageable pageable = PageRequest.of(page, size);
         Page<User> users = userRepo.findAll(pageable);
+        List<User> userList = users.getContent();
+        List<UserResp> listUserResp = new ArrayList<>();
+        for(User x : userList){
+            UserResp userResp = new UserResp();
+            userResp.setUser(x);
+            userResp.setRoles(userRoles.getRole(x.getId()).stream().map(userRole -> userRole.getRoleName()).collect(Collectors.toList()));
+            listUserResp.add(userResp);
+        }
 
-        return ResponseEntity.ok(MessageResp.page(users));
+        return ResponseEntity.ok(MessageResp.page(users,listUserResp));
     }
 
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
@@ -119,9 +134,9 @@ public class UserCtrl {
 //        user = userRepo.save(user);
 //        return ResponseEntity.ok(MessageResp.ok(user));
 //    }
-//    @PreAuthorize("#payload.userId == authentication.principal.id")
+
 //    @RequestMapping(path = "/change-password", method = RequestMethod.PUT)
-//    @ApiOperation(value = "User do change their password", response = MessageResp.class)
+//
 //    public HttpEntity<Object> changePassword(@Valid @RequestBody ChangePassword payload) {
 //        Optional<User> userOpt = userRepo.findById(payload.getUserId());
 //        if (!userOpt.isPresent()) {
@@ -139,4 +154,5 @@ public class UserCtrl {
 //        mailSender.sendChangePasswordSuccess(user);
 //        return ResponseEntity.ok(MessageResp.ok());
 //    }
+
 }

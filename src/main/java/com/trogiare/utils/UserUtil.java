@@ -1,6 +1,8 @@
 package com.trogiare.utils;
 
 
+import com.trogiare.common.enumrate.ErrorCodesEnum;
+import com.trogiare.exception.BadRequestException;
 import com.trogiare.model.User;
 import com.trogiare.security.UserPrincipal;
 import org.slf4j.Logger;
@@ -9,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,6 +69,22 @@ public final class UserUtil {
             return null;
 
         return au.getAuthorities().stream().map(r -> r.getAuthority()).collect(Collectors.toList());
+    }
+    public static Boolean checkAuthorize(String ... roles){
+        for(String x : roles){
+          if(getUserRoles().contains(x)){
+            return true;
+          }
+        }
+        throw new BadRequestException(ErrorCodesEnum.ACCESS_DENIED);
+    }
+    public static Boolean checkAuthorize(Boolean check ){
+        if(check) {
+            return true;
+        }else{
+            throw new BadRequestException(ErrorCodesEnum.ACCESS_DENIED);
+        }
+
     }
 
     public static User getCurrentUser() {
