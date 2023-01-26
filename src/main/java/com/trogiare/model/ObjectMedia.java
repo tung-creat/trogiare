@@ -20,4 +20,7 @@ public class ObjectMedia {
     private String objectId;
     private String objectType;
     private String refType;
+    @Column(name="media_id")
+    private String mediaId;
+
 }

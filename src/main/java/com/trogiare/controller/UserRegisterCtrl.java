@@ -143,7 +143,13 @@ public class UserRegisterCtrl {
             log.info("Email is activated");
             return ResponseEntity.ok().body(MessageResp.ok());
         }
-
+        List<UserToken> TokensRequestedLastest = userTokenRepo.findTokenRequested(user.getId(),
+                TokenTypeEnum.VERIFYING_EMAIL.name(), PageRequest.of(0,1));
+        if(TokensRequestedLastest.size() == 1 && TokensRequestedLastest.get(0).getStatus().equals(TokenStatusEnum.WAITING.name())){
+            UserToken usertokenRequestedLastest = TokensRequestedLastest.get(0);
+            usertokenRequestedLastest.setStatus(TokenStatusEnum.DISABLED.name());
+            userTokenRepo.save(usertokenRequestedLastest);
+        }
         // get 3 token same type
         List<UserToken> tokensRequested = userTokenRepo.findTokenRequested(user.getId(),
                 TokenTypeEnum.VERIFYING_EMAIL.name(),
@@ -156,13 +162,7 @@ public class UserRegisterCtrl {
         }
 
         //update new status for token lastest request
-        List<UserToken> TokensRequestedLastest = userTokenRepo.findTokenRequested(user.getId(),
-                TokenTypeEnum.VERIFYING_EMAIL.name(), PageRequest.of(0,1));
-        if(TokensRequestedLastest.size() == 1 && TokensRequestedLastest.get(0).getStatus().equals(TokenStatusEnum.WAITING.name())){
-            UserToken usertokenRequestedLastest = TokensRequestedLastest.get(0);
-            usertokenRequestedLastest.setStatus(TokenStatusEnum.DISABLED.name());
-            userTokenRepo.save(usertokenRequestedLastest);
-        }
+
 
         //save Token to Database
         String authToken = TokenUtil.generateToken(64);
@@ -173,8 +173,8 @@ public class UserRegisterCtrl {
         userToken.setExpiredTime(LocalDateTime.now().plusHours(TokenUtil.EXPRIED_TOKEN));
         userToken.setStatus(TokenStatusEnum.WAITING.name());
         userToken.setTokenType(TokenTypeEnum.VERIFYING_EMAIL.name());
-        userTokenRepo.save(userToken);
-        emailService.sendVerifyingReq(user,authToken);
+        userToken = userTokenRepo.save(userToken);
+        emailService.sendVerifyingReq(user,userToken.getToken());
         return ResponseEntity.ok(MessageResp.ok(user));
     }
 
@@ -256,6 +256,6 @@ public class UserRegisterCtrl {
         if(ChronoUnit.HOURS.between(userTokens.get(2).getCreatedTime(), LocalDateTime.now()) < TokenUtil.EXPRIED_TOKEN){
             return false;
         }
-        return true;
+     return true;
     }
 }

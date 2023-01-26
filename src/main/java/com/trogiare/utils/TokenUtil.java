@@ -26,8 +26,7 @@ public class TokenUtil {
 
 
 
-    public static String generateToken(int size, String... dictionary) {
-//        String chars = (!StringUtils.isEmpty(dictionary) ? String.join("", dictionary) : DICTIONARY);
+    public static String generateToken(int size) {
         String chars =  DICTIONARY;
         String pw = RandomStringUtils.random(size, chars);
         return pw;

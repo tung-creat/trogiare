@@ -47,24 +47,24 @@ public class EmailService {
         Map<String, String> query = new HashMap<>();
         query.put("userName", user.getFirstName());
         query.put("verify", uripath);
-        EmailTemplate emailTemplate = handleTemplateEmail(query, MailTemplateEnum.EMAIL_VERIFYING);
-        helper.setText(emailTemplate.getContent(), true); // Use this or above line.
+        String emailTemplate = handleTemplateEmail(query, MailTemplateEnum.EMAIL_VERIFYING);
+        helper.setText(emailTemplate, true); // Use this or above line.
         helper.setFrom(sender);
         helper.setTo(user.getEmail());
-        helper.setSubject(emailTemplate.getSubject());
+        helper.setSubject(map.get(MailTemplateEnum.EMAIL_VERIFYING.name()).getSubject());
         mailSender.send(mimeMessage);
     }
 
     public void sendWelcomeMember(User user) throws MessagingException {
         Map<String, String> query = new HashMap<>();
         query.put("userName", user.getFirstName());
-        EmailTemplate emailTemplate = handleTemplateEmail(query, MailTemplateEnum.EMAIL_VERIFYING);
+        String emailTemplate = handleTemplateEmail(query, MailTemplateEnum.WELCOME_MEMBER);
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
-        helper.setText(emailTemplate.getContent(), true); // Use this or above line.
+        helper.setText(emailTemplate, true); // Use this or above line.
         helper.setFrom(sender);
         helper.setTo(user.getEmail());
-        helper.setSubject(emailTemplate.getSubject());
+        helper.setSubject(map.get(MailTemplateEnum.WELCOME_MEMBER.name()).getSubject());
         mailSender.send(mimeMessage);
     }
 
@@ -74,35 +74,36 @@ public class EmailService {
         Map<String, String> query = new HashMap<>();
         query.put("userName", user.getFirstName());
         query.put("verify", otp);
-        EmailTemplate emailTemplate = handleTemplateEmail(query, MailTemplateEnum.FORGOT_PASSWORD);
-        helper.setText(emailTemplate.getContent(), true); // Use this or above line.
+        String emailTemplate = handleTemplateEmail(query, MailTemplateEnum.FORGOT_PASSWORD);
+        helper.setText(emailTemplate, true); // Use this or above line.
         helper.setFrom(sender);
         helper.setTo(user.getEmail());
-        helper.setSubject(emailTemplate.getSubject());
+        helper.setSubject(map.get(MailTemplateEnum.FORGOT_PASSWORD.name()).getSubject());
         mailSender.send(mimeMessage);
 
     }
 
-    public EmailTemplate handleTemplateEmail(Map<String, String> information, MailTemplateEnum mailTemplateEnum) {
+    public String handleTemplateEmail(Map<String, String> information, MailTemplateEnum mailTemplateEnum) {
         EmailTemplate emailTemplate = getEmailTemplate(mailTemplateEnum.name());
         if (emailTemplate == null) {
             return null;
         }
-        String emailContent = emailTemplate.getContent();
+       EmailTemplate emailResult = emailTemplate;
+        String emailContent = emailResult.getContent();
         for (var x : information.entrySet()) {
             emailContent = emailContent.replace("${" + x.getKey() + "}", x.getValue());
         }
-        emailTemplate.setContent(emailContent);
-        return emailTemplate;
+
+      return emailContent;
     }
 
-    public EmailTemplate getEmailTemplate(String typeEmailTemplate) {
+    public  EmailTemplate getEmailTemplate(String typeEmailTemplate) {
         if (map.size() > 0 && !map.isEmpty()) {
           return  map.get(typeEmailTemplate);
         }
         List<EmailTemplate> emailTemplateList = emailTemplateRepo.findAll();
         map = emailTemplateList.stream()
-                .collect(Collectors.toMap(EmailTemplate::getType, Function.identity()));
+                .collect(Collectors.toMap(EmailTemplate::getCode, Function.identity()));
         return map.get(typeEmailTemplate);
     }
 
