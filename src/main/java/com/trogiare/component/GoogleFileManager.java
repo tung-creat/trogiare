@@ -96,7 +96,10 @@ public class GoogleFileManager {
                         )
                         .setFields("id").execute();
                 fileSystem.setId(TokenUtil.generateToken(36));
-                fileSystem.setSize(ConvertByteToMB.getSize(uploadFile.getSize()));
+//                logger.info("size " + ConvertByteToMB.getSize(uploadFile.getSize()));
+                logger.info("Hash " + uploadFile.getId());
+                logger.info("name " + name + "-" + fileSystem.getId() + "-" + uploadFile.getId());
+                fileSystem.setSize(String.valueOf(uploadFile.getSize()));
                 fileSystem.setHash(uploadFile.getId());
                 fileSystem.setName(name + "-" + fileSystem.getId() + "-" + uploadFile.getId());
                 fileSystem.setCreatedTime(LocalDateTime.now());

@@ -13,11 +13,14 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="file_system",uniqueConstraints = @UniqueConstraint(columnNames = {"id","name","hash"}))
+@Table(name="file_system")
 public class FileSystem implements Serializable {
+    private static final long serialVersionUID = -40943944218239318L;
     @Id
+    @Column(length = 36)
     private String id;
     private String hash;
+    @Column(length = 1000)
     private String name;
     private String type;
     @Column(name="created_time")
