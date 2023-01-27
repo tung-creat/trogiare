@@ -1,5 +1,5 @@
 package com.trogiare.common.enumrate;
 
-public enum ObjectMediaTypeEnum {
+public enum ObjectTypeEnum {
     USER,POST
 }

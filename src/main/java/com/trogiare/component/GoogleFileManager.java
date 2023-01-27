@@ -56,12 +56,12 @@ public class GoogleFileManager {
     }
 
     // Download file by id
-    public void downloadFile(String id, OutputStream outputStream) throws IOException, GeneralSecurityException {
+    public InputStream downloadFile(String id) throws IOException, GeneralSecurityException {
         if (id != null) {
-            googleDriveConfig.getInstance().files()
-                    .get(id).executeMediaAndDownloadTo(outputStream);
+           return googleDriveConfig.getInstance().files()
+                    .get(id).executeMediaAsInputStream();
         }
-
+        return null;
     }
 
     // Delete file by id
@@ -97,11 +97,14 @@ public class GoogleFileManager {
                         .setFields("id").execute();
                 fileSystem.setId(TokenUtil.generateToken(36));
 //                logger.info("size " + ConvertByteToMB.getSize(uploadFile.getSize()));
-                logger.info("Hash " + uploadFile.getId());
-                logger.info("name " + name + "-" + fileSystem.getId() + "-" + uploadFile.getId());
+//                logger.info("Hash " + uploadFile.getId());
+//                logger.info("name " + name + "-" + fileSystem.getId() + "-" + uploadFile.getId());
                 fileSystem.setSize(String.valueOf(uploadFile.getSize()));
                 fileSystem.setHash(uploadFile.getId());
-                fileSystem.setName(name + "-" + fileSystem.getId() + "-" + uploadFile.getId());
+                StringBuilder sb = new StringBuilder(name);
+                sb.append("-" + fileSystem.getId());
+                sb.append("-"+uploadFile.getId());
+                fileSystem.setName(String.valueOf(sb));
                 fileSystem.setCreatedTime(LocalDateTime.now());
                 fileSystem.setType(file.getContentType());
                 logger.info("Chuyển");

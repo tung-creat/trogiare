@@ -21,5 +21,4 @@ public class Address implements Serializable {
     private String village;
     private String addressDetails;
 
-
 }

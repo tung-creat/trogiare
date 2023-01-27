@@ -1,13 +1,15 @@
 package com.trogiare.service;
 
 import com.trogiare.common.enumrate.ObjectMediaRefValueEnum;
-import com.trogiare.common.enumrate.ObjectMediaTypeEnum;
+import com.trogiare.common.enumrate.ObjectTypeEnum;
 import com.trogiare.component.GoogleFileManager;
 import com.trogiare.exception.BadRequestException;
+import com.trogiare.model.Address;
 import com.trogiare.model.FileSystem;
 import com.trogiare.model.ObjectMedia;
 import com.trogiare.model.Post;
 import com.trogiare.payload.PostPayload;
+import com.trogiare.repo.AddressRepo;
 import com.trogiare.repo.FileSystemRepo;
 import com.trogiare.repo.ObjectMediaRepo;
 import com.trogiare.repo.PostRepo;
@@ -35,13 +37,22 @@ public class PostService {
     private FileSystemRepo fileSystemRepo;
     @Autowired
     private ObjectMediaRepo objectMediaRepo;
+    @Autowired
+    private AddressRepo addressRepo;
 
     @Transactional
     public MessageResp savePost(PostPayload payload,String uid) {
+        Address address = new Address();
+        address.setAddressDetails(payload.getAddressDetails());
+        address.setVillage(payload.getVillage());
+        address.setDistrict(payload.getDistrict());
+        address.setProvince(payload.getProvince());
+        address =addressRepo.save(address);
         Post post = new Post();
         post.setInformationFromPayLoad(payload);
         post.setCreatedTime(LocalDateTime.now());
         post.setUpdatedTime(LocalDateTime.now());
+        post.setAddressId(address.getId());
         post.setOwnerId(uid);
         post = postRepo.save(post);
         saveImagesPost(payload, post);
@@ -55,7 +66,7 @@ public class PostService {
         ObjectMedia objectMedia = new ObjectMedia();
         objectMedia.setMediaId(fileSystem.getId());
         objectMedia.setObjectId(post.getId());
-        objectMedia.setObjectType(ObjectMediaTypeEnum.POST.name());
+        objectMedia.setObjectType(ObjectTypeEnum.POST.name());
         objectMedia.setRefType(ObjectMediaRefValueEnum.IMAGE_POST.name());
         fileSystems.add(fileSystem);
         listObjectMedia.add(objectMedia);
@@ -67,7 +78,7 @@ public class PostService {
                 objectMedia = new ObjectMedia();
                 objectMedia.setMediaId(fileSystem.getId());
                 objectMedia.setObjectId(post.getId());
-                objectMedia.setObjectType(ObjectMediaTypeEnum.POST.name());
+                objectMedia.setObjectType(ObjectTypeEnum.POST.name());
                 objectMedia.setRefType(ObjectMediaRefValueEnum.IMAGE_DETAILS_POST.name());
                 listObjectMedia.add(objectMedia);
             }

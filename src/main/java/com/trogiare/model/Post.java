@@ -22,7 +22,8 @@ public class Post implements Serializable {
     @Column(columnDefinition = "CHAR(36)")
     private String id;
     private String name;
-    private String address;
+    @Column(name="address_id")
+    private String addressId;
     @Column(name ="price_unit")
     private String priceUnit;
     private Long price;
@@ -48,7 +49,6 @@ public class Post implements Serializable {
     private String ownerId;
 
     public void setInformationFromPayLoad(PostPayload payload){
-        this.setAddress(payload.getAddress());
         this.setArea(payload.getArea());
         this.setBedroom(payload.getBedroom());
         this.setName(payload.getName());

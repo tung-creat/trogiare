@@ -71,7 +71,9 @@ public class WebSecurityConfig extends GlobalMethodSecurityConfiguration {
                         "/logout/**",
                         "/api/v1/reg/**",
                         "/api/v1/file/**",
-                        "/api/v1/socks/**"
+                        "/api/v1/socks/**",
+                        "/api/v1/provinces/**",
+                        "/image/**"
                         ).permitAll()
                 .requestMatchers("/swagger-resources/**",
                         "/webjars/**",

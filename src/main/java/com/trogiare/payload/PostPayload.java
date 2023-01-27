@@ -10,16 +10,23 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 @Setter
 @Getter
 public class PostPayload {
-    @NotNull(message = "name is not null")
+    @NotBlank(message = "name not blank")
     private String name;
-    @NotNull(message = "address is not null")
-    private String address;
+    @NotBlank(message = "address not blank")
+    private String addressDetails;
+    @NotBlank(message = "province not blank")
+    private String province;
+    @NotBlank(message = "district not blank")
+    private String district;
+    @NotBlank(message = "village not blank")
+    private String village;
     private String priceUnit;
     private Long price;
-    @NotNull(message = "area is not null")
+    @NotBlank(message = "area is not blank")
     private Double area;
     private Integer bedroom;
     private String description;
@@ -30,8 +37,9 @@ public class PostPayload {
     private Integer numberFloor;
     private Integer toilet;
     private String furniture;
-    @NotNull(message = "image is not null")
+    @NotBlank(message = "image is not blank")
     private MultipartFile image;
+    @NotBlank(message = "imagesDetails is not blank")
     private List<MultipartFile> imagesDetails;
 
 
