@@ -2,12 +2,16 @@ package com.trogiare;
 
 import com.trogiare.common.enumrate.MailTemplateEnum;
 import com.trogiare.model.EmailTemplate;
+import com.trogiare.model.impl.PostAndAddress;
 import com.trogiare.repo.EmailTemplateRepo;
+import com.trogiare.repo.PostRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -20,6 +24,8 @@ import java.util.List;
 public class TrogiareApplication {
     @Autowired
     private EmailTemplateRepo mailTemplateRepo;
+    @Autowired
+    private PostRepo postRepo;
     public static void main(String[] args) {
         SpringApplication.run(TrogiareApplication.class, args);
     }

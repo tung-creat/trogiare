@@ -1,6 +1,7 @@
 package com.trogiare.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -8,8 +9,7 @@ import org.hibernate.annotations.GenericGenerator;
 import java.io.Serializable;
 
 @Entity
-@Getter
-@Setter
+@Data
 public class Address implements Serializable {
     @Id
     @GeneratedValue(generator = "uuid")
