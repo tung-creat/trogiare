@@ -27,20 +27,24 @@ public class HandleStringAndNumber {
         Boolean checkNumber = false;
         Double numberArrived = number.doubleValue();
         String numberUnit = "";
+        Boolean checkDivisible = false;
 
-        if (numberArrived / (Math.pow(10, 9)) >= 1) {
+        if (number / (Math.pow(10, 9)) >= 1) {
             numberArrived = numberArrived / (Math.pow(10, 9));
+            checkDivisible = number % (Math.pow(10, 9)) == 0 ? true : false;
             numberUnit = "tỷ" + numberUnit;
         } else if (numberArrived / (Math.pow(10, 6)) >= 1) {
             numberArrived = numberArrived / (Math.pow(10, 6));
+            checkDivisible = number % (Math.pow(10, 6)) == 0 ? true: false;
             numberUnit = "triệu" + numberUnit;
         } else if (numberArrived / (Math.pow(10, 3)) >= 1) {
             numberArrived = numberArrived / (Math.pow(10, 3));
+            checkDivisible = number % (Math.pow(10, 6)) == 0 ? true : false;
             numberUnit = "nghìn" + numberUnit;
         }
         numberArrived = Math.round(numberArrived * 10.0) / 10.0;
         map.put("unit", numberUnit);
-        map.put("number", numberArrived % 10 == 0 ? String.valueOf(numberArrived.intValue()) : String.valueOf(numberArrived));
+        map.put("number",checkDivisible || numberArrived % 10 == 0 ? String.valueOf(numberArrived.intValue()) : String.valueOf(numberArrived));
         String result = map.get("number") +" " + map.get("unit");
         return result;
     }

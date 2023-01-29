@@ -19,6 +19,7 @@ public enum ErrorCodesEnum {
     EMAIL_DOES_NOT_EXISTED("EMAIL_DOES_NOT_EXISTED"),
     INVALID_INPUT_PARAMETER("INVALID_INPUT_PARAMETER"),
     INVALID_ID("Invalid id"),
+    NOT_FOUND_POST("not found post"),
     ACCOUNT_NOT_EXIST("Tài khoản không tồn tại"),
     INVALID_INPUT("invalid input"),
     INVALID_UID("invalid uid"),

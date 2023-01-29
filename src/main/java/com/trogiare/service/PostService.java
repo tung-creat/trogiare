@@ -1,5 +1,7 @@
 package com.trogiare.service;
 
+import com.trogiare.common.Constants;
+import com.trogiare.common.enumrate.ErrorCodesEnum;
 import com.trogiare.common.enumrate.ObjectMediaRefValueEnum;
 import com.trogiare.common.enumrate.ObjectTypeEnum;
 import com.trogiare.component.GoogleFileManager;
@@ -9,7 +11,7 @@ import com.trogiare.model.FileSystem;
 import com.trogiare.model.ObjectMedia;
 import com.trogiare.model.Post;
 import com.trogiare.model.impl.PostAndAddress;
-import com.trogiare.model.impl.PostIddAndImageName;
+import com.trogiare.model.impl.PostIddAndImages;
 import com.trogiare.payload.PostPayload;
 import com.trogiare.repo.AddressRepo;
 import com.trogiare.repo.FileSystemRepo;
@@ -33,10 +35,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -53,7 +53,7 @@ public class PostService {
     private ObjectMediaRepo objectMediaRepo;
     @Autowired
     private AddressRepo addressRepo;
-    private static String URI_AUTHORITY;
+    private final String PATH_GET_IMAGE = "/image/";
 
     @Transactional
     public MessageResp savePost(PostPayload payload,String uid) {
@@ -75,14 +75,7 @@ public class PostService {
     }
 
     public MessageResp getPosts(HttpServletRequest request ,Integer size , Integer page) throws URISyntaxException {
-        if(ValidateUtil.isEmpty(URI_AUTHORITY)){
-            String baseUrl = ServletUriComponentsBuilder.fromRequestUri(request)
-                    .replacePath(null)
-                    .build()
-                    .toUriString();
-
-            URI_AUTHORITY = baseUrl;
-        }
+      String URI_AUTHORITY = Constants.getAuthority(request);
         Pageable pageable = PageRequest.of(page,size);
         List<PostAndAddress> postAndAddressList = postRepo.getPosts(pageable);
         Map<String,PostResp> postRespMap = new HashMap<>();
@@ -94,14 +87,14 @@ public class PostService {
             postRespMap.put(postResp.getId(),postResp);
             postIds.add(postResp.getId());
         }
-        List<PostIddAndImageName> postIdAndImageNameList = objectMediaRepo.getImagesByPostIds(postIds,ObjectMediaRefValueEnum.IMAGE_POST.name());
+        List<PostIddAndImages> postIdAndImageNameList = objectMediaRepo.getImagesByPostIds(postIds,ObjectMediaRefValueEnum.IMAGE_POST.name());
         Map<String,String> ImageMap = new HashMap<>();
-        for(PostIddAndImageName x : postIdAndImageNameList){
+        for(PostIddAndImages x : postIdAndImageNameList){
             ImageMap.put(x.getPostId(),x.getImageName());
         }
         for(var x : ImageMap.entrySet()){
             StringBuilder nameImage = new StringBuilder(x.getValue());
-            nameImage.insert(0,"/image/");
+            nameImage.insert(0,PATH_GET_IMAGE);
             nameImage.insert(0,URI_AUTHORITY);
             ImageMap.put(x.getKey(),nameImage.toString());
         }
@@ -115,6 +108,34 @@ public class PostService {
         List<PostResp> result = new ArrayList<PostResp>(postRespMap.values());
         return MessageResp.ok(result);
 
+    }
+    public MessageResp getPostById(HttpServletRequest request,String postId){
+        Optional<PostAndAddress> postAndAddressOp = postRepo.getPostById(postId);
+        String URI_AUTHORITY = Constants.getAuthority(request);
+        if(!postAndAddressOp.isPresent()){
+            throw new BadRequestException(ErrorCodesEnum.NOT_FOUND_POST);
+        }
+        PostAndAddress postAndAddress = postAndAddressOp.get();
+        PostResp postResp = new PostResp();
+        postResp.setPost(postAndAddress.getPost());
+        postResp.setAddress(postAndAddress.getAddress());
+        List<PostIddAndImages> postIddAndImagesList = objectMediaRepo.getImagesByPostIds(List.of(postId),null);
+        List<String> imageDetails = new ArrayList<>();
+        for(PostIddAndImages x : postIddAndImagesList){
+            if(x.getTypeImage().equals(ObjectMediaRefValueEnum.IMAGE_POST.name())){
+                StringBuilder nameImage = new StringBuilder(x.getImageName());
+                nameImage.insert(0,PATH_GET_IMAGE);
+                nameImage.insert(0,URI_AUTHORITY);
+                postResp.setImage(nameImage.toString());
+            }else{
+                StringBuilder nameImage = new StringBuilder(x.getImageName());
+                nameImage.insert(0,PATH_GET_IMAGE);
+                nameImage.insert(0,URI_AUTHORITY);
+                imageDetails.add(nameImage.toString());
+            }
+        }
+        postResp.setImageDetails(imageDetails);
+        return MessageResp.ok(postResp);
     }
 
 
@@ -145,4 +166,5 @@ public class PostService {
         fileSystemRepo.saveAll(fileSystems);
         objectMediaRepo.saveAll(listObjectMedia);
     }
+
 }

@@ -1,7 +1,7 @@
 package com.trogiare.repo;
 
 import com.trogiare.model.ObjectMedia;
-import com.trogiare.model.impl.PostIddAndImageName;
+import com.trogiare.model.impl.PostIddAndImages;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -12,10 +12,10 @@ import java.util.List;
 
 @Repository
 public interface ObjectMediaRepo extends PagingAndSortingRepository<ObjectMedia,String>, ListCrudRepository<ObjectMedia,String> {
-    @Query(value="select ob.objectId as postId,f.name as imageName " +
+    @Query(value="select ob.objectId as postId,ob.refType as typeImage,f.name as imageName " +
             "from ObjectMedia ob  left join FileSystem f " +
             "on ob.mediaId = f.id where ob.objectId in :listPostId " +
             "and (:refType is null or ob.refType = :refType)")
-    List<PostIddAndImageName> getImagesByPostIds(@Param("listPostId") List<String> postIds,
-                                                 @Param("refType") String refType);
+    List<PostIddAndImages> getImagesByPostIds(@Param("listPostId") List<String> postIds,
+                                              @Param("refType") String refType);
 }

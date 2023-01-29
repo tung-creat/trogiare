@@ -34,6 +34,10 @@ public class PostCtrl {
         }
         MessageResp messageResp = postService.getPosts(request,size,page);
         return ResponseEntity.ok().body(messageResp);
-
+    }
+    @RequestMapping(path="/get-post-by-id/{postId}")
+    public HttpEntity<?> getPostById(@PathVariable(value="postId") String postId,HttpServletRequest request){
+        MessageResp messageResp = postService.getPostById(request,postId);
+        return ResponseEntity.ok().body(messageResp);
     }
 }

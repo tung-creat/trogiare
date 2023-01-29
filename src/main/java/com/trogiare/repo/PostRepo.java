@@ -8,8 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PostRepo extends PagingAndSortingRepository<Post, String>, ListCrudRepository<Post, String> {
     @Query(value =
@@ -18,5 +20,11 @@ public interface PostRepo extends PagingAndSortingRepository<Post, String>, List
             " LEFT JOIN Address ad" +
             " ON ad.id = p.addressId")
     List<PostAndAddress> getPosts(Pageable pageable);
-//    addressDetails,Address.province,Address.district,Address.village
+    @Query(value =
+            "SELECT p as post,ad as address " +
+                    " FROM Post p" +
+                    " LEFT JOIN Address ad" +
+                    " ON ad.id = p.addressId where p.id = :postId")
+    Optional<PostAndAddress> getPostById(@Param("postId") String postId);
+    //    addressDetails,Address.province,Address.district,Address.village
 }
