@@ -39,6 +39,7 @@ public class Post implements Serializable {
     private String juridical;
     private Double gateway;
     private Integer numberFloor;
+    private String status;
     private Integer toilet;
     private String furniture;
     @Column(name="created_time",nullable = false)

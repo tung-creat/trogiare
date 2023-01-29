@@ -40,4 +40,9 @@ public class PostCtrl {
         MessageResp messageResp = postService.getPostById(request,postId);
         return ResponseEntity.ok().body(messageResp);
     }
+    @RequestMapping(path="/delete-post-by-id/{postId}")
+    public HttpEntity<?> deletePostById(@PathVariable(value="postId") String postId){
+        MessageResp messageResp = postService.deletePostById(postId);
+        return ResponseEntity.ok().body(messageResp);
+    }
 }

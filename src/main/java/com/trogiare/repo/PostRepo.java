@@ -18,13 +18,13 @@ public interface PostRepo extends PagingAndSortingRepository<Post, String>, List
             "SELECT p as post,ad as address " +
             " FROM Post p" +
             " LEFT JOIN Address ad" +
-            " ON ad.id = p.addressId")
+            " ON ad.id = p.addressId where p.status like 'PUBLIC'")
     List<PostAndAddress> getPosts(Pageable pageable);
     @Query(value =
             "SELECT p as post,ad as address " +
                     " FROM Post p" +
                     " LEFT JOIN Address ad" +
-                    " ON ad.id = p.addressId where p.id = :postId")
+                    " ON ad.id = p.addressId where p.id = :postId and p.status not like 'DELETED'")
     Optional<PostAndAddress> getPostById(@Param("postId") String postId);
     //    addressDetails,Address.province,Address.district,Address.village
 }

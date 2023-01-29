@@ -4,7 +4,9 @@ import com.trogiare.common.Constants;
 import com.trogiare.common.enumrate.ErrorCodesEnum;
 import com.trogiare.common.enumrate.ObjectMediaRefValueEnum;
 import com.trogiare.common.enumrate.ObjectTypeEnum;
+import com.trogiare.common.enumrate.PostStatusEnum;
 import com.trogiare.component.GoogleFileManager;
+import com.trogiare.controller.SaveFileCtrl;
 import com.trogiare.exception.BadRequestException;
 import com.trogiare.model.Address;
 import com.trogiare.model.FileSystem;
@@ -22,8 +24,11 @@ import com.trogiare.respone.PostResp;
 import com.trogiare.utils.HandleStringAndNumber;
 import com.trogiare.utils.ValidateUtil;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -40,6 +45,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class PostService {
+    private static final Logger logger = LoggerFactory.getLogger(PostService.class);
     @Autowired
     private  PostRepo postRepo;
     @Value("${app.path.save.image-post}")
@@ -65,6 +71,7 @@ public class PostService {
         address =addressRepo.save(address);
         Post post = new Post();
         post.setInformationFromPayLoad(payload);
+        post.setStatus(PostStatusEnum.PUBLIC.name());
         post.setCreatedTime(LocalDateTime.now());
         post.setUpdatedTime(LocalDateTime.now());
         post.setAddressId(address.getId());
@@ -136,6 +143,20 @@ public class PostService {
         }
         postResp.setImageDetails(imageDetails);
         return MessageResp.ok(postResp);
+
+    }
+    public MessageResp deletePostById(String postId){
+       Optional<Post> postOP=  postRepo.findById(postId);
+       if(!postOP.isPresent()){
+           throw new BadRequestException(ErrorCodesEnum.NOT_FOUND_POST);
+       }
+       Post post = postOP.get();
+       if(post.getStatus().equals(PostStatusEnum.DELETED.name())){
+           throw new BadRequestException(ErrorCodesEnum.NOT_FOUND_POST);
+       }
+       post.setStatus(PostStatusEnum.DELETED.name());
+       postRepo.save(post);
+       return MessageResp.ok();
     }
 
 
