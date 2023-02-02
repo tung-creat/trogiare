@@ -17,7 +17,9 @@ import java.time.LocalDateTime;
 public class FileSystem implements Serializable {
     private static final long serialVersionUID = -40943944218239318L;
     @Id
-    @Column(length = 36)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid")
+    @Column(columnDefinition = "CHAR(36)")
     private String id;
     private String hash;
     @Column(length = 1000)

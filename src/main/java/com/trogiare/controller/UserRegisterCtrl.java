@@ -14,6 +14,7 @@ import com.trogiare.repo.UserRoleRepo;
 import com.trogiare.repo.UserTokenRepo;
 import com.trogiare.service.EmailService;
 import com.trogiare.utils.TokenUtil;
+import io.swagger.annotations.ApiOperation;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -49,6 +50,7 @@ public class UserRegisterCtrl {
     private EmailService emailService;
     @Transactional
     @RequestMapping(path="",method = RequestMethod.POST)
+    @ApiOperation(value = "Register account", response = MessageResp.class)
     public HttpEntity<?> register(@Valid @RequestBody UserPayload payload) throws MessagingException, URISyntaxException {
         if(!payload.getRePassword().equals(payload.getPassword())){
             return ResponseEntity.status(400).body(MessageResp.error(ErrorCodesEnum.REPASSWORD_NOT_EQUALS_PASSWORD));
@@ -96,6 +98,7 @@ public class UserRegisterCtrl {
         return ResponseEntity.ok().body(MessageResp.ok(user));
     }
     @RequestMapping(path = "/confirm", method = RequestMethod.POST)
+    @ApiOperation(value = "Confirm account", response = MessageResp.class)
     public HttpEntity<Object> emailConfirm(@Valid @RequestBody VerifyEmail payload) throws MessagingException {
         Optional<UserToken> userTokenOtp =  userTokenRepo.findByToken(payload.getToken());
         if(!userTokenOtp.isPresent()){
@@ -130,6 +133,7 @@ public class UserRegisterCtrl {
     }
 
     @RequestMapping(path = "/resend/confirm", method = RequestMethod.POST)
+    @ApiOperation(value = "Resend Confirm Email", response = MessageResp.class)
     public HttpEntity<Object> resendEmailConfirm(@Valid @RequestBody ForgotPassword payload) throws MessagingException, URISyntaxException {
         String email = payload.getEmail();
         Optional<User> opUser = userRepo.findByEmailFirt(email);
@@ -179,6 +183,7 @@ public class UserRegisterCtrl {
     }
 
     @RequestMapping(path = "/forgot-password", method = RequestMethod.POST)
+    @ApiOperation(value = "Forgot Password", response = MessageResp.class)
     public HttpEntity<Object> forgotPassword(@Valid @RequestBody ForgotPassword payload) throws MessagingException {
         log.info("forgotPass: {}", payload);
         String email = payload.getEmail().trim().toLowerCase();
@@ -207,6 +212,7 @@ public class UserRegisterCtrl {
     }
 
     @RequestMapping(path = "/forgot-password/set-new", method = RequestMethod.POST)
+    @ApiOperation(value = "SetNew Password by token", response = MessageResp.class)
     public HttpEntity<Object> setNewPasswordByToken(@Valid @RequestBody SetPassword payload) {
         if (!payload.getYourPassword().equals(payload.getRetypePassword())) {
             log.info("Password can NOT be empty, Password and Retype password must be matched each other");

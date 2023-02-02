@@ -32,6 +32,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import jakarta.servlet.http.HttpServletRequest;
@@ -59,7 +60,7 @@ public class PostService {
     private ObjectMediaRepo objectMediaRepo;
     @Autowired
     private AddressRepo addressRepo;
-    private final String PATH_GET_IMAGE = "/image/";
+
 
     @Transactional
     public MessageResp savePost(PostPayload payload,String uid) {
@@ -81,10 +82,13 @@ public class PostService {
         return MessageResp.ok(post);
     }
 
-    public MessageResp getPosts(HttpServletRequest request ,Integer size , Integer page) throws URISyntaxException {
+    public MessageResp getPosts(HttpServletRequest request ,Integer size,
+                                Integer page,String address,Long priceMin, Long priceMax,String keyword,
+                                Long areaMin, Long areaMax,Long bedRoom
+                                ) throws URISyntaxException {
       String URI_AUTHORITY = Constants.getAuthority(request);
-        Pageable pageable = PageRequest.of(page,size);
-        List<PostAndAddress> postAndAddressList = postRepo.getPosts(pageable);
+        Pageable pageable = PageRequest.of(page,size, Sort.by("price"));
+        List<PostAndAddress> postAndAddressList = postRepo.getPosts(pageable,address,priceMin,priceMax,keyword,areaMin,areaMax,bedRoom);
         Map<String,PostResp> postRespMap = new HashMap<>();
         List<String> postIds = new ArrayList<>();
         for(PostAndAddress x : postAndAddressList){
@@ -101,7 +105,7 @@ public class PostService {
         }
         for(var x : ImageMap.entrySet()){
             StringBuilder nameImage = new StringBuilder(x.getValue());
-            nameImage.insert(0,PATH_GET_IMAGE);
+            nameImage.insert(0,Constants.PATH_GET_IMAGE);
             nameImage.insert(0,URI_AUTHORITY);
             ImageMap.put(x.getKey(),nameImage.toString());
         }
@@ -131,12 +135,12 @@ public class PostService {
         for(PostIddAndImages x : postIddAndImagesList){
             if(x.getTypeImage().equals(ObjectMediaRefValueEnum.IMAGE_POST.name())){
                 StringBuilder nameImage = new StringBuilder(x.getImageName());
-                nameImage.insert(0,PATH_GET_IMAGE);
+                nameImage.insert(0,Constants.PATH_GET_IMAGE);
                 nameImage.insert(0,URI_AUTHORITY);
                 postResp.setImage(nameImage.toString());
             }else{
                 StringBuilder nameImage = new StringBuilder(x.getImageName());
-                nameImage.insert(0,PATH_GET_IMAGE);
+                nameImage.insert(0,Constants.PATH_GET_IMAGE);
                 nameImage.insert(0,URI_AUTHORITY);
                 imageDetails.add(nameImage.toString());
             }
@@ -163,7 +167,7 @@ public class PostService {
     private void saveImagesPost(PostPayload payload, Post post) {
         List<FileSystem> fileSystems = new ArrayList<>();
         List<ObjectMedia> listObjectMedia = new ArrayList<>();
-        FileSystem fileSystem = googleFileManager.uploadFile(payload.getImage(), PATH_IMAGE_FILE_POST, HandleStringAndNumber.removeAccent(payload.getName()));
+        FileSystem fileSystem = googleFileManager.uploadFile(payload.getImage(),PATH_IMAGE_FILE_POST, payload.getName());
         ObjectMedia objectMedia = new ObjectMedia();
         objectMedia.setMediaId(fileSystem.getId());
         objectMedia.setObjectId(post.getId());
@@ -174,7 +178,7 @@ public class PostService {
 
         if (payload.getImagesDetails() != null) {
             for (MultipartFile multipartFile : payload.getImagesDetails()) {
-                fileSystem = googleFileManager.uploadFile(multipartFile, PATH_IMAGE_FILE_POST, HandleStringAndNumber.removeAccent(payload.getName()));
+                fileSystem = googleFileManager.uploadFile(multipartFile,PATH_IMAGE_FILE_POST, payload.getName());
                 fileSystems.add(fileSystem);
                 objectMedia = new ObjectMedia();
                 objectMedia.setMediaId(fileSystem.getId());

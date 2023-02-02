@@ -37,6 +37,7 @@ public class PostPayload {
     private Integer numberFloor;
     private Integer toilet;
     private String furniture;
+    private String typePost;
     @NotBlank(message = "image is not blank")
     private MultipartFile image;
     @NotBlank(message = "imagesDetails is not blank")

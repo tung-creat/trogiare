@@ -22,6 +22,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -39,6 +40,7 @@ public class WebSecurityConfig extends GlobalMethodSecurityConfiguration {
     private String allowedDomain;
     @Autowired
     private LocalTokenAuth localTokenAuth;
+
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
@@ -54,6 +56,7 @@ public class WebSecurityConfig extends GlobalMethodSecurityConfiguration {
             throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         logger.info("Configuration for http security");
@@ -75,12 +78,12 @@ public class WebSecurityConfig extends GlobalMethodSecurityConfiguration {
                         "/api/v1/socks/**",
                         "/api/v1/provinces/**",
                         "/image/**"
-                        ).permitAll()
-                .requestMatchers(HttpMethod.GET,"/api/v1/posts/**").permitAll()
+                ).permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
                 .requestMatchers("/swagger-resources/**",
-                        "/webjars/**",
                         "/swagger-ui.html",
-                        "/v2/api-docs").permitAll()
+                        "/v2/api-docs",
+                        "/webjars/**").permitAll()
                 .requestMatchers("/api/v1/**").authenticated()
                 .and()
                 .addFilterBefore(localTokenAuth, UsernamePasswordAuthenticationFilter.class)
@@ -91,5 +94,10 @@ public class WebSecurityConfig extends GlobalMethodSecurityConfiguration {
     }
 
 
-
+    @Bean
+    public BasicAuthenticationEntryPoint swaggerAuthenticationEntryPoint() {
+        BasicAuthenticationEntryPoint entryPoint = new BasicAuthenticationEntryPoint();
+        entryPoint.setRealmName("Swagger Realm");
+        return entryPoint;
+    }
 }

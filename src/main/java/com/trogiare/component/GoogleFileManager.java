@@ -7,29 +7,31 @@ import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.Permission;
 import com.trogiare.model.FileSystem;
 import com.trogiare.security.LocalTokenAuth;
+import com.trogiare.utils.HandleStringAndNumber;
 import com.trogiare.utils.TokenUtil;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
 @Component
-public class GoogleFileManager {
+public class GoogleFileManager implements Serializable {
+    private static final long serialVersionUID = -40943944218239318L;
     static final Logger logger = LoggerFactory.getLogger(GoogleFileManager.class);
 
     @Autowired
     private GoogleDriveConfig googleDriveConfig;
+    @Autowired
+    private ConvertByteToMB convertByteToMB;
 
     // Get all file
     public List listEverything() throws IOException, GeneralSecurityException {
@@ -84,10 +86,12 @@ public class GoogleFileManager {
         FileSystem fileSystem = new FileSystem();
         try {
             String folderId = getFolderId(folderName);
+            logger.info("vcl");
             if (null != file) {
                 File fileMetadata = new File();
                 fileMetadata.setParents(Collections.singletonList(folderId));
                 fileMetadata.setName(TokenUtil.generateToken(40));
+                logger.info("toang");
                 File uploadFile = googleDriveConfig.getInstance()
                         .files()
                         .create(fileMetadata, new InputStreamContent(
@@ -96,14 +100,16 @@ public class GoogleFileManager {
                         )
                         .setFields("id").execute();
                 fileSystem.setId(TokenUtil.generateToken(36));
+                logger.info("tạch");
 //                logger.info("size " + ConvertByteToMB.getSize(uploadFile.getSize()));
 //                logger.info("Hash " + uploadFile.getId());
 //                logger.info("name " + name + "-" + fileSystem.getId() + "-" + uploadFile.getId());
-                fileSystem.setSize(String.valueOf(uploadFile.getSize()));
+                fileSystem.setSize(String.valueOf(convertByteToMB.getSize(file.getSize())));
                 fileSystem.setHash(uploadFile.getId());
-                StringBuilder sb = new StringBuilder(name);
+                StringBuilder sb = new StringBuilder(HandleStringAndNumber.removeAccent(name));
                 sb.append("-" + fileSystem.getId());
                 sb.append("-"+uploadFile.getId());
+                sb.append(".png");
                 fileSystem.setName(String.valueOf(sb));
                 fileSystem.setCreatedTime(LocalDateTime.now());
                 fileSystem.setType(file.getContentType());
@@ -111,7 +117,7 @@ public class GoogleFileManager {
                 return fileSystem;
             }
         } catch (Exception e) {
-            e.getMessage();
+            e.printStackTrace();
         }
         logger.info("fail");
         return fileSystem;

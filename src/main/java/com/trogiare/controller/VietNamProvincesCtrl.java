@@ -7,6 +7,7 @@ import com.trogiare.repo.DistrictsRepo;
 import com.trogiare.repo.ProvincesRepo;
 import com.trogiare.repo.WardsRepo;
 import com.trogiare.respone.MessageResp;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
@@ -26,16 +27,19 @@ public class VietNamProvincesCtrl {
     @Autowired
     private WardsRepo wardsRepo;
     @RequestMapping(path = "",method = RequestMethod.GET)
+    @ApiOperation(value = "get All provinces", response = MessageResp.class)
     public HttpEntity<?> getProvinces(){
         List<Provinces> provincesList = provincesRepo.findAll();
         return ResponseEntity.ok().body(MessageResp.ok(provincesList));
     }
     @RequestMapping(path="/get-districts-by-provice-id/{idProvince}")
+    @ApiOperation(value = "get All districts by provinces ID", response = MessageResp.class)
     public HttpEntity<?> getDistricByProvinceId(@PathVariable(name="idProvince") String idProvince){
         List<Districts> districtsList = districtsRepo.findByProvinceCode(idProvince);
         return ResponseEntity.ok().body(MessageResp.ok(districtsList));
     }
     @RequestMapping(path="/get-wards-by-districts-id/{idDistrict}")
+    @ApiOperation(value = "Get wards by district ID ", response = MessageResp.class)
     public HttpEntity<?> getWardsByDistrictId(@PathVariable(name="idDistrict") String idDistrict){
         List<Wards> wardsList = wardsRepo.findByDistrictCode(idDistrict);
         return ResponseEntity.ok().body(MessageResp.ok(wardsList));

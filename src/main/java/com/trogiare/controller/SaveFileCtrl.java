@@ -28,6 +28,6 @@ public class SaveFileCtrl {
     private String PATH_FILE_PRODUCT;
     @RequestMapping(value="/api/v1/file",method = RequestMethod.POST)
     public HttpEntity<?> uploadFile(@RequestParam("file") MultipartFile file){
-       return ResponseEntity.ok().body(MessageResp.ok(googleFileManager.uploadFile(file,PATH_FILE_PRODUCT,"")));
+        return null;
     }
 }

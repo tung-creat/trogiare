@@ -48,6 +48,8 @@ public class Post implements Serializable {
     private LocalDateTime updatedTime;
     @Column(name="owner_id",nullable = false)
     private String ownerId;
+    @Column(name="type_post")
+    private String typePost;
 
     public void setInformationFromPayLoad(PostPayload payload){
         this.setArea(payload.getArea());
@@ -66,6 +68,7 @@ public class Post implements Serializable {
         if(payload.getPrice() != null){
             this.setCompactNumber(HandleStringAndNumber.compactNumber(payload.getPrice()));
         }
+        this.setTypePost(payload.getTypePost());
 
     }
 

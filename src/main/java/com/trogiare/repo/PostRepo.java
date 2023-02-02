@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,10 +17,24 @@ import java.util.Optional;
 public interface PostRepo extends PagingAndSortingRepository<Post, String>, ListCrudRepository<Post, String> {
     @Query(value =
             "SELECT p as post,ad as address " +
-            " FROM Post p" +
-            " LEFT JOIN Address ad" +
-            " ON ad.id = p.addressId where p.status like 'PUBLIC'")
-    List<PostAndAddress> getPosts(Pageable pageable);
+                    "FROM Post p LEFT JOIN Address ad ON ad.id = p.addressId " +
+                    "where p.status like 'PUBLIC'" +
+                    "and (:address is null or ad.addressDetails like concat('%',:address,'%')) " +
+                    "and (:priceMin is null or :priceMin <= p.price)" +
+                    "and (:priceMax is null or :priceMax >= p.price)" +
+                    "and (:keyword is null or p.description like concat('%',:keyword,'%'))" +
+                    "and (:areaMin is null or p.area >= :areaMin)" +
+                    "and (:areaMax is null or p.area <= :areaMax)" +
+                    "and (:bedRoom is null or p.bedroom = :bedRoom)")
+    List<PostAndAddress> getPosts(Pageable pageable,
+                                  @Param("address") String address,
+                                  @Param("priceMin") Long priceMin,
+                                  @Param("priceMax") Long priceMax,
+                                  @Param("keyword") String keyword,
+                                  @Param("areaMin") Long areaMin,
+                                  @Param("areaMax") Long areaMax,
+                                  @Param("bedRoom") Long bedRoom);
+
     @Query(value =
             "SELECT p as post,ad as address " +
                     " FROM Post p" +

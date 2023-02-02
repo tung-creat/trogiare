@@ -24,6 +24,7 @@ public enum ErrorCodesEnum {
     INVALID_INPUT("invalid input"),
     INVALID_UID("invalid uid"),
     ACCESS_DENIED("access denied"),
+    INVALID_FILE("file invalid"),
     USERNAME_EXIST("Username exist");
 
     private final String desc;

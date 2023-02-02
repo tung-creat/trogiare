@@ -4,7 +4,9 @@ import com.trogiare.component.GoogleFileManager;
 import com.trogiare.model.FileSystem;
 import com.trogiare.repo.FileSystemRepo;
 import com.trogiare.respone.MessageResp;
+import io.swagger.annotations.ApiOperation;
 import jakarta.mail.Message;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
@@ -22,7 +24,9 @@ public class ViewAndDowloadFIle {
     private FileSystemRepo fileSystemRepo;
     @Autowired
     private GoogleFileManager googleFileManager;
+    @Transactional
     @RequestMapping(path="/image/{nameFile}",method = RequestMethod.GET)
+//
         public HttpEntity<?> getImage(@PathVariable(name="nameFile") String nameFile) throws GeneralSecurityException, IOException {
         Optional<FileSystem> fileSystemOp=fileSystemRepo.findByName(nameFile);
         if(!fileSystemOp.isPresent()){
