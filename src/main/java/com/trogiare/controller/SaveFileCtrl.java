@@ -1,6 +1,5 @@
 package com.trogiare.controller;
 
-import com.trogiare.component.GoogleFileManager;
 import com.trogiare.respone.MessageResp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +21,7 @@ import java.nio.file.Paths;
 @RestController
 public class SaveFileCtrl {
     private static final Logger logger = LoggerFactory.getLogger(SaveFileCtrl.class);
-    @Autowired
-    private GoogleFileManager googleFileManager;
+
     @Value("${app.path.save.image-post}")
     private String PATH_FILE_PRODUCT;
     @RequestMapping(value="/api/v1/file",method = RequestMethod.POST)

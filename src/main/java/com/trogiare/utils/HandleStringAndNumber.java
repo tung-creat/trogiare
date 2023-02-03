@@ -18,7 +18,7 @@ public class HandleStringAndNumber {
         String temp = Normalizer.normalize(s, Normalizer.Form.NFD);
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
         temp = pattern.matcher(temp).replaceAll("");
-        return temp.toLowerCase().replaceAll("đ", "d").replaceAll("\\s+", "-").trim();
+        return temp.toLowerCase().replaceAll("đ", "d").replaceAll("\\s+", "-").replaceAll("[^a-zA-Z0-9 ]","-").trim();
     }
 
     //    }

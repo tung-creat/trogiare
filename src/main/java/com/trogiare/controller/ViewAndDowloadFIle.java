@@ -1,11 +1,11 @@
 package com.trogiare.controller;
 
-import com.trogiare.component.GoogleFileManager;
 import com.trogiare.model.FileSystem;
 import com.trogiare.repo.FileSystemRepo;
 import com.trogiare.respone.MessageResp;
-import io.swagger.annotations.ApiOperation;
+import com.trogiare.service.GcsService;
 import jakarta.mail.Message;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -23,19 +23,22 @@ public class ViewAndDowloadFIle {
     @Autowired
     private FileSystemRepo fileSystemRepo;
     @Autowired
-    private GoogleFileManager googleFileManager;
+    private GcsService gcsService;
+
     @Transactional
-    @RequestMapping(path="/image/{nameFile}",method = RequestMethod.GET)
+    @RequestMapping(path="/trogiare/image/{typeImage}/{nameFile}",method = RequestMethod.GET)
 //
-        public HttpEntity<?> getImage(@PathVariable(name="nameFile") String nameFile) throws GeneralSecurityException, IOException {
-        Optional<FileSystem> fileSystemOp=fileSystemRepo.findByName(nameFile);
+        public HttpEntity<?> getImage(HttpServletRequest request) throws GeneralSecurityException, IOException {
+        System.out.println(request.getServletPath());
+        String pathImage = request.getServletPath().substring(1);
+        Optional<FileSystem> fileSystemOp=fileSystemRepo.findByPath(pathImage);
         if(!fileSystemOp.isPresent()){
             return ResponseEntity.ok().body(MessageResp.ok());
         }
         FileSystem fileSystem = fileSystemOp.get();
-        String hash = fileSystem.getHash();
-        InputStream result = googleFileManager.downloadFile(hash);
-        byte[] allBytes = result.readAllBytes();
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(allBytes);
+        String hash = fileSystem.getPath();
+        byte[] result = gcsService.downloadFile(hash);
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(result);
+
     }
 }

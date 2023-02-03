@@ -7,13 +7,9 @@ import com.trogiare.model.User;
 import com.trogiare.repo.UserRepo;
 import com.trogiare.respone.MessageResp;
 import com.trogiare.respone.UserResp;
-import com.trogiare.security.UserPrincipal;
 import com.trogiare.service.EmailService;
 import com.trogiare.utils.UserUtil;
 import com.trogiare.utils.ValidateUtil;
-import io.swagger.annotations.ApiOperation;
-import jakarta.annotation.security.RolesAllowed;
-import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +48,7 @@ public class UserCtrl {
     private ListRoleUserComponent userRoles;
 
     @RequestMapping(path = "", method = RequestMethod.GET)
-    @ApiOperation(value = "Get All User", response = MessageResp.class)
+
     public HttpEntity<Object> getAll(@RequestParam(required = false) Integer page,
                                      @RequestParam(required = false) Integer size) {
         UserUtil.checkAuthorize("ADMIN");
@@ -77,7 +73,6 @@ public class UserCtrl {
     }
 
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    @ApiOperation(value = "Get User By id", response = MessageResp.class)
     public HttpEntity<Object> getById(@PathVariable("id") String id) {
         if (ValidateUtil.isEmpty(id)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(MessageResp.error(ErrorCodesEnum.INVALID_ID));

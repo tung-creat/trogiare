@@ -13,7 +13,6 @@ import com.trogiare.respone.UserResp;
 import com.trogiare.security.LocalTokenProvider;
 import com.trogiare.utils.TokenUtil;
 import com.trogiare.utils.ValidateUtil;
-import io.swagger.annotations.ApiOperation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -40,7 +39,6 @@ public class AuthenCtrl {
     @Autowired
     private LocalTokenProvider localTokenProvider;
     @RequestMapping(path="/local",method = RequestMethod.POST)
-    @ApiOperation(value = "Login", response = MessageResp.class)
     public HttpEntity<?> localAuthen(@Valid @RequestBody UserLogin payload){
         if(ValidateUtil.isEmpty(payload.getUserName()) || ValidateUtil.isEmpty(payload.getPassword())){
             throw new BadRequestException(ErrorCodesEnum.INVALID_INPUT);
