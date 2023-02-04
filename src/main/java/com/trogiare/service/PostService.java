@@ -5,6 +5,7 @@ import com.trogiare.common.enumrate.ErrorCodesEnum;
 import com.trogiare.common.enumrate.ObjectMediaRefValueEnum;
 import com.trogiare.common.enumrate.ObjectTypeEnum;
 import com.trogiare.common.enumrate.PostStatusEnum;
+import com.trogiare.component.PostCodeComponent;
 import com.trogiare.controller.SaveFileCtrl;
 import com.trogiare.exception.BadRequestException;
 import com.trogiare.model.Address;
@@ -63,6 +64,8 @@ public class PostService {
     private ObjectMediaRepo objectMediaRepo;
     @Autowired
     private AddressRepo addressRepo;
+    @Autowired
+    private PostCodeComponent postCodeComponent;
 
 
     @Transactional
@@ -78,8 +81,10 @@ public class PostService {
         post.setStatus(PostStatusEnum.PUBLIC.name());
         post.setCreatedTime(LocalDateTime.now());
         post.setUpdatedTime(LocalDateTime.now());
+        post.setExpirationDate(LocalDateTime.now().plusDays(10));
         post.setAddressId(address.getId());
         post.setOwnerId(uid);
+        post.setPostCode(postCodeComponent.getCode());
         post = postRepo.save(post);
         saveImagesPost(payload, post);
         return MessageResp.ok(post);
@@ -91,8 +96,9 @@ public class PostService {
                                 ) throws URISyntaxException {
       String URI_AUTHORITY = Constants.getAuthority(request);
         Pageable pageable = PageRequest.of(page,size, Sort.by("price"));
-        List<PostAndAddress> postAndAddressList = postRepo.getPosts(pageable,address,priceMin,priceMax,keyword,areaMin,areaMax,bedRoom);
-        Map<String,PostResp> postRespMap = new HashMap<>();
+       Page<PostAndAddress> postAndAddressPage = postRepo.getPosts(pageable,address,priceMin,priceMax,keyword,areaMin,areaMax,bedRoom);
+        List<PostAndAddress>  postAndAddressList =  postAndAddressPage.getContent();
+       Map<String,PostResp> postRespMap = new HashMap<>();
         List<String> postIds = new ArrayList<>();
         for(PostAndAddress x : postAndAddressList){
             PostResp postResp = new PostResp();
@@ -120,7 +126,7 @@ public class PostService {
             }
         }
         List<PostResp> result = new ArrayList<PostResp>(postRespMap.values());
-        return MessageResp.ok(result);
+        return MessageResp.page(postAndAddressPage,result);
 
     }
     public MessageResp getPostById(HttpServletRequest request,String postId){

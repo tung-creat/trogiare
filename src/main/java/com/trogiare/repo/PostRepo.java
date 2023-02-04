@@ -26,7 +26,7 @@ public interface PostRepo extends PagingAndSortingRepository<Post, String>, List
                     "and (:areaMin is null or p.area >= :areaMin)" +
                     "and (:areaMax is null or p.area <= :areaMax)" +
                     "and (:bedRoom is null or p.bedroom = :bedRoom)")
-    List<PostAndAddress> getPosts(Pageable pageable,
+    Page<PostAndAddress> getPosts(Pageable pageable,
                                   @Param("address") String address,
                                   @Param("priceMin") Long priceMin,
                                   @Param("priceMax") Long priceMax,

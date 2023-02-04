@@ -31,13 +31,7 @@ public class ViewAndDowloadFIle {
         public HttpEntity<?> getImage(HttpServletRequest request) throws GeneralSecurityException, IOException {
         System.out.println(request.getServletPath());
         String pathImage = request.getServletPath().substring(1);
-        Optional<FileSystem> fileSystemOp=fileSystemRepo.findByPath(pathImage);
-        if(!fileSystemOp.isPresent()){
-            return ResponseEntity.ok().body(MessageResp.ok());
-        }
-        FileSystem fileSystem = fileSystemOp.get();
-        String hash = fileSystem.getPath();
-        byte[] result = gcsService.downloadFile(hash);
+        byte[] result = gcsService.downloadFile(pathImage);
         return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(result);
 
     }

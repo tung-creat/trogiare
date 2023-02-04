@@ -35,10 +35,6 @@ public class GcsService {
         Blob blob = storage.create(blobInfo, file.getBytes());
         FileSystem fileSystem = new FileSystem();
         fileSystem.setId(TokenUtil.generateToken(36));
-        logger.info("tạch");
-//                logger.info("size " + ConvertByteToMB.getSize(uploadFile.getSize()));
-//                logger.info("Hash " + uploadFile.getId());
-//                logger.info("name " + name + "-" + fileSystem.getId() + "-" + uploadFile.getId());
         fileSystem.setSize(String.valueOf(convertByteToMB.getSize(file.getSize())));
         fileSystem.setPath(path);
         fileSystem.setCreatedTime(LocalDateTime.now());

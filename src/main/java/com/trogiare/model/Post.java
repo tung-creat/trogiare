@@ -1,4 +1,7 @@
 package com.trogiare.model;
+import com.trogiare.common.Constants;
+import com.trogiare.common.enumrate.PostDirectionHouseEnum;
+import com.trogiare.common.enumrate.PostTypeEnum;
 import com.trogiare.payload.PostPayload;
 import com.trogiare.utils.HandleStringAndNumber;
 import jakarta.persistence.*;
@@ -6,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -35,7 +39,8 @@ public class Post implements Serializable {
     @Column(name="description",columnDefinition = "TEXT")
     private String description;
     private Double facade;
-    private String direction;
+    @Enumerated(EnumType.STRING)
+    private PostDirectionHouseEnum direction;
     private String juridical;
     private Double gateway;
     private Integer numberFloor;
@@ -46,10 +51,16 @@ public class Post implements Serializable {
     private LocalDateTime createdTime;
     @Column(name="updated_time",nullable = false)
     private LocalDateTime updatedTime;
+    @Column(name="expiration_date",nullable = false)
+    private LocalDateTime expirationDate;
     @Column(name="owner_id",nullable = false)
     private String ownerId;
     @Column(name="type_post")
-    private String typePost;
+    @Enumerated(EnumType.STRING)
+    private PostTypeEnum typePost;
+    @Column(name="post_code")
+    private String postCode;
+
 
     public void setInformationFromPayLoad(PostPayload payload){
         this.setArea(payload.getArea());

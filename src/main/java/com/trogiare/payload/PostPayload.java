@@ -1,5 +1,7 @@
 package com.trogiare.payload;
 
+import com.trogiare.common.enumrate.PostDirectionHouseEnum;
+import com.trogiare.common.enumrate.PostTypeEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.Lob;
 import jakarta.validation.constraints.NotBlank;
@@ -31,13 +33,13 @@ public class PostPayload {
     private Integer bedroom;
     private String description;
     private Double facade;
-    private String direction;
+    private PostDirectionHouseEnum direction;
     private String juridical;
     private Double gateway;
     private Integer numberFloor;
     private Integer toilet;
     private String furniture;
-    private String typePost;
+    private PostTypeEnum typePost;
     @NotBlank(message = "image is not blank")
     private MultipartFile image;
     @NotBlank(message = "imagesDetails is not blank")

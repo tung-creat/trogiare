@@ -2,9 +2,13 @@ package com.trogiare.respone;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.trogiare.common.enumrate.PostDirectionHouseEnum;
+import com.trogiare.common.enumrate.PostTypeEnum;
 import com.trogiare.model.Address;
 import com.trogiare.model.Post;
 import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Lob;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,19 +34,23 @@ public class PostResp {
     private Integer bedroom;
     private String description;
     private Double facade;
-    private String direction;
+    private PostDirectionHouseEnum direction;
     private String juridical;
     private Double gateway;
     private Integer numberFloor;
     private Integer toilet;
     private String furniture;
     private LocalDateTime createdTime;
-    private LocalDateTime updatedTime;
+    private LocalDateTime expirationDate;
     private String ownerId;
+    private PostTypeEnum typePost;
+    private String postCode;
+    private LocalDateTime updatedTime;
     private Address address;
     private String image;
     private List<String> imageDetails;
-    public void setPost(Post post){
+
+    public void setPost(Post post) {
         this.id = post.getId();
         this.name = post.getName();
         this.priceUnit = post.getPriceUnit();
@@ -61,5 +69,8 @@ public class PostResp {
         this.createdTime = post.getCreatedTime();
         this.updatedTime = post.getUpdatedTime();
         this.ownerId = post.getOwnerId();
+        this.expirationDate = post.getExpirationDate();
+        this.postCode = post.getPostCode();
+        this.typePost = post.getTypePost();
     }
 }
