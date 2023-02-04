@@ -37,7 +37,9 @@ public class WebSecurityConfig extends GlobalMethodSecurityConfiguration {
     @Autowired
     private OAuthEntryPointRest unauthorizedHandler;
     @Value("${app.cors.allow_domain}")
-    private String allowedDomain;
+    private String allowedDomain1;
+    @Value("${app.cors.allow_domain_deploy}")
+    private String allowedDomain2;
     @Autowired
     private LocalTokenAuth localTokenAuth;
 
@@ -46,7 +48,12 @@ public class WebSecurityConfig extends GlobalMethodSecurityConfiguration {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/v1/**").allowedOrigins(allowedDomain);
+                registry.addMapping("/**").allowedOrigins(allowedDomain2)
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD")
+                        .allowCredentials(true);
+                registry.addMapping("/**").allowedOrigins(allowedDomain1)
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD")
+                        .allowCredentials(true);
             }
         };
     }
