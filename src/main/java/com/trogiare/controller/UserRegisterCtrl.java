@@ -49,7 +49,7 @@ public class UserRegisterCtrl {
     private EmailService emailService;
     @Transactional
     @RequestMapping(path="",method = RequestMethod.POST)
-    public HttpEntity<?> register(@Valid @RequestBody UserPayload payload) throws MessagingException, URISyntaxException {
+    public HttpEntity<?> register(@Valid @RequestBody UserPayload payload,@RequestHeader(value = "Referer", required = false) String referer) throws MessagingException, URISyntaxException {
         if(!payload.getRePassword().equals(payload.getPassword())){
             return ResponseEntity.status(400).body(MessageResp.error(ErrorCodesEnum.REPASSWORD_NOT_EQUALS_PASSWORD));
         }
@@ -93,7 +93,7 @@ public class UserRegisterCtrl {
         userToken.setCreatedTime(LocalDateTime.now());
         userToken.setExpiredTime(LocalDateTime.now().plusHours(TokenUtil.EXPRIED_TOKEN));
         userTokenRepo.save(userToken);
-        emailService.sendVerifyingReq(user,token);
+        emailService.sendVerifyingReq(user,token,referer);
         return ResponseEntity.ok().body(MessageResp.ok());
     }
     @RequestMapping(path = "/confirm", method = RequestMethod.POST)
@@ -131,7 +131,7 @@ public class UserRegisterCtrl {
     }
 
     @RequestMapping(path = "/resend/confirm", method = RequestMethod.POST)
-    public HttpEntity<Object> resendEmailConfirm(@Valid @RequestBody ForgotPasswordPayload payload) throws MessagingException, URISyntaxException {
+    public HttpEntity<Object> resendEmailConfirm(@RequestHeader(value = "Referer", required = false) String referer,@Valid @RequestBody ForgotPasswordPayload payload) throws MessagingException, URISyntaxException {
         String email = payload.getEmail();
         Optional<User> opUser = userRepo.findByUsernameOrEmail(email);
         if (!opUser.isPresent()) {
@@ -175,7 +175,7 @@ public class UserRegisterCtrl {
         userToken.setStatus(TokenStatusEnum.WAITING.name());
         userToken.setTokenType(TokenTypeEnum.VERIFYING_EMAIL.name());
         userToken = userTokenRepo.save(userToken);
-        emailService.sendVerifyingReq(user,userToken.getToken());
+        emailService.sendVerifyingReq(user,userToken.getToken(),referer);
         return ResponseEntity.ok(MessageResp.ok());
     }
 

@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 // Implementing EmailService interface
 public class EmailService {
     private static Map<String, EmailTemplate> map = new HashMap<>();
-    private final String URI_CONFIRM_EMAIL = "/confirm";
     @Autowired
     private JavaMailSender mailSender;
     @Autowired
@@ -38,10 +37,8 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String sender;
 
-    public void sendVerifyingReq(User user, String token) throws MessagingException, URISyntaxException {
-        Map<String, String> param = new HashMap<>();
-        param.put("token", token);
-        String uripath = props.getURIPath(URI_CONFIRM_EMAIL, param);
+    public void sendVerifyingReq(User user, String token,String refer) throws MessagingException, URISyntaxException {
+        String uripath = refer+"/confirm/" +token;
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
         Map<String, String> query = new HashMap<>();
