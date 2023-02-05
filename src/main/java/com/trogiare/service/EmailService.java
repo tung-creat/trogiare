@@ -38,7 +38,7 @@ public class EmailService {
     private String sender;
 
     public void sendVerifyingReq(User user, String token,String refer) throws MessagingException, URISyntaxException {
-        String uripath = refer+"/confirm/" +token;
+        String uripath = refer+"confirm/" +token;
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
         Map<String, String> query = new HashMap<>();
