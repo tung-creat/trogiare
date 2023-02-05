@@ -5,7 +5,7 @@ import com.trogiare.exception.BadRequestException;
 import com.trogiare.model.User;
 import com.trogiare.model.UserRole;
 import com.trogiare.model.UserToken;
-import com.trogiare.payload.ForgotPassword;
+import com.trogiare.payload.ForgotPasswordPayload;
 import com.trogiare.payload.UserPayload;
 import com.trogiare.payload.VerifyEmail;
 import com.trogiare.payload.user.SetPassword;
@@ -53,17 +53,18 @@ public class UserRegisterCtrl {
         if(!payload.getRePassword().equals(payload.getPassword())){
             return ResponseEntity.status(400).body(MessageResp.error(ErrorCodesEnum.REPASSWORD_NOT_EQUALS_PASSWORD));
         }
-        Optional<User> userByUserName = userRepo.findByUserNameFirt(payload.getUserName());
-        if(userByUserName.isPresent()){
-            return ResponseEntity.status(400).body(MessageResp.error(ErrorCodesEnum.USERNAME_EXIST));
-        }
-        Optional<User> userBySDT = userRepo.findBySdtFirt(payload.getSdt());
-        if(userBySDT.isPresent()){
-            return ResponseEntity.status(400).body(MessageResp.error(ErrorCodesEnum.SDT_EXIST));
-        }
-        Optional<User> userByEmail = userRepo.findByEmailFirt(payload.getEmail());
-        if(userByEmail.isPresent()){
-            return ResponseEntity.status(400).body(MessageResp.error(ErrorCodesEnum.EMAIL_EXIST));
+        Optional<User> userOp = userRepo.getUserExists(payload.getUserName(), payload.getSdt(),payload.getEmail());
+        if(userOp.isPresent()){
+            User user = userOp.get();
+            if(user.getEmail().equals(payload.getEmail())){
+                throw new BadRequestException(ErrorCodesEnum.EMAIL_EXIST);
+            }
+            if(user.getSdt().equals(payload.getSdt())){
+                throw new BadRequestException(ErrorCodesEnum.SDT_EXIST);
+            }
+            if(user.getUsername().equals(payload.getUserName())){
+                throw new BadRequestException(ErrorCodesEnum.USERNAME_EXIST);
+            }
         }
         User user = new User();
         user.setUsername(payload.getUserName());
@@ -93,7 +94,7 @@ public class UserRegisterCtrl {
         userToken.setExpiredTime(LocalDateTime.now().plusHours(TokenUtil.EXPRIED_TOKEN));
         userTokenRepo.save(userToken);
         emailService.sendVerifyingReq(user,token);
-        return ResponseEntity.ok().body(MessageResp.ok(user));
+        return ResponseEntity.ok().body(MessageResp.ok());
     }
     @RequestMapping(path = "/confirm", method = RequestMethod.POST)
     public HttpEntity<Object> emailConfirm(@Valid @RequestBody VerifyEmail payload) throws MessagingException {
@@ -126,13 +127,13 @@ public class UserRegisterCtrl {
         userToken.setStatus(TokenStatusEnum.ACCEPTED.name());
         userTokenRepo.save(userToken);
         emailService.sendWelcomeMember(user);
-        return ResponseEntity.ok(MessageResp.ok(user));
+        return ResponseEntity.ok(MessageResp.ok());
     }
 
     @RequestMapping(path = "/resend/confirm", method = RequestMethod.POST)
-    public HttpEntity<Object> resendEmailConfirm(@Valid @RequestBody ForgotPassword payload) throws MessagingException, URISyntaxException {
+    public HttpEntity<Object> resendEmailConfirm(@Valid @RequestBody ForgotPasswordPayload payload) throws MessagingException, URISyntaxException {
         String email = payload.getEmail();
-        Optional<User> opUser = userRepo.findByEmailFirt(email);
+        Optional<User> opUser = userRepo.findByUsernameOrEmail(email);
         if (!opUser.isPresent()) {
             log.info("NOT valid user Email-ID, This email does NOT exist");
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -175,14 +176,14 @@ public class UserRegisterCtrl {
         userToken.setTokenType(TokenTypeEnum.VERIFYING_EMAIL.name());
         userToken = userTokenRepo.save(userToken);
         emailService.sendVerifyingReq(user,userToken.getToken());
-        return ResponseEntity.ok(MessageResp.ok(user));
+        return ResponseEntity.ok(MessageResp.ok());
     }
 
     @RequestMapping(path = "/forgot-password", method = RequestMethod.POST)
-    public HttpEntity<Object> forgotPassword(@Valid @RequestBody ForgotPassword payload) throws MessagingException {
+    public HttpEntity<Object> forgotPassword(@Valid @RequestBody ForgotPasswordPayload payload) throws MessagingException {
         log.info("forgotPass: {}", payload);
         String email = payload.getEmail().trim().toLowerCase();
-        Optional<User> opUser = userRepo.findByEmailFirt(email);
+        Optional<User> opUser = userRepo.findByUsernameOrEmail(email);
         if (!opUser.isPresent()) {
             log.info("NOT valid user Email-ID, This email does NOT exist");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(MessageResp.error(ErrorCodesEnum.EMAIL_DOES_NOT_EXISTED));
@@ -207,14 +208,18 @@ public class UserRegisterCtrl {
     }
 
     @RequestMapping(path = "/forgot-password/set-new", method = RequestMethod.POST)
-
     public HttpEntity<Object> setNewPasswordByToken(@Valid @RequestBody SetPassword payload) {
         if (!payload.getYourPassword().equals(payload.getRetypePassword())) {
             log.info("Password can NOT be empty, Password and Retype password must be matched each other");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(MessageResp.error(ErrorCodesEnum.REPASSWORD_NOT_EQUALS_PASSWORD));
         }
+        Optional<User> userOp = userRepo.findByUsernameOrEmail(payload.getEmail());
+        if(!userOp.isPresent()){
+            throw new BadRequestException(ErrorCodesEnum.ACCOUNT_NOT_EXIST);
+        }
+        User user = userOp.get();
         String token = payload.getToken();
-        Optional<UserToken> userTokenOtp = userTokenRepo.findByToken(token);
+        Optional<UserToken> userTokenOtp = userTokenRepo.findByTokenAndUserId(token,user.getId());
         if (!userTokenOtp.isPresent()) {
             log.info("NOT valid Token");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(MessageResp.error(ErrorCodesEnum.INVALID_TOKEN));
@@ -229,20 +234,14 @@ public class UserRegisterCtrl {
         if(userToken.getStatus().equals(TokenStatusEnum.ACCEPTED.name())){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(MessageResp.error(ErrorCodesEnum.TOKEN_EXPIRED));
         }
-        if (!payload.getUid().equals(userToken.getUserId())) {
-            log.info("NOT valid UID");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(MessageResp.error(ErrorCodesEnum.INVALID_UID));
-        }
         //change status Token
         userToken.setStatus(TokenStatusEnum.ACCEPTED.name());
         userTokenRepo.save(userToken);
         //update password for user
-        Optional<User>  userOtp = userRepo.findById(userToken.getUserId());
-        User user = userOtp.get();
         user.setPassword(passwordEncoder.encode(payload.getYourPassword()));
         userRepo.save(user);
 //        mailSender.sendChangePasswordSuccess(user);
-        return ResponseEntity.ok(MessageResp.ok(user));
+        return ResponseEntity.ok(MessageResp.ok());
     }
 
     private boolean checkValidNumberRequest(List<UserToken> userTokens){

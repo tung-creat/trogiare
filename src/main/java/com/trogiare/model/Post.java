@@ -58,8 +58,9 @@ public class Post implements Serializable {
     @Column(name="type_post")
     @Enumerated(EnumType.STRING)
     private PostTypeEnum typePost;
-    @Column(name="post_code")
+    @Column(name="post_code",nullable = false)
     private String postCode;
+
 
 
     public void setInformationFromPayLoad(PostPayload payload){

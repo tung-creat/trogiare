@@ -28,13 +28,14 @@ public class UserResp implements Serializable {
     private String email;
     private String sdt;
     private String status;
+    private String avatar;
     @Column(name ="created_time")
     private LocalDateTime createdTime;
     @Column(name="updated_time")
     private LocalDateTime updatedTime;
     private String token;
     private List<String> roles;
-    public void setUser(User user){
+    public void setUser(User user) {
         this.id = user.getId();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();

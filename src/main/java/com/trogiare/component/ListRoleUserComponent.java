@@ -4,6 +4,7 @@ import com.trogiare.common.enumrate.ErrorCodesEnum;
 import com.trogiare.exception.BadRequestException;
 import com.trogiare.model.UserRole;
 import com.trogiare.repo.UserRoleRepo;
+import com.trogiare.respone.UserResp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +33,15 @@ public class ListRoleUserComponent {
         }
         userRoleMap.put(userId,userRoles);
         return userRoles;
+    }
+    public void addRole(UserRole userRole){
+        if(!(userRoleMap == null || userRoleMap.isEmpty())){
+            List<UserRole> x = userRoleMap.get(userRole.getUserId());
+            if(!(x == null || x.isEmpty())){
+                x.add(userRole);
+                userRoleMap.put(userRole.getUserId(),x);
+            }
+        }
     }
     private void checkTimeValid(){
         if(timeStart == null){

@@ -108,6 +108,7 @@ public class EmailService {
     }
 
 
+
     // Method 2
     // To send an email with attachment
 //        public String

@@ -7,9 +7,11 @@ import com.trogiare.model.FileSystem;
 import com.trogiare.payload.news.NewsPayload;
 import com.trogiare.repo.FileSystemRepo;
 import com.trogiare.respone.MessageResp;
+import com.trogiare.security.UserPrincipal;
 import com.trogiare.service.GcsService;
 import com.trogiare.service.NewsService;
 import com.trogiare.utils.HandleStringAndNumber;
+import com.trogiare.utils.UserUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -51,7 +53,9 @@ public class NewsCtrl {
     }
     @RequestMapping(path="",method = RequestMethod.POST)
     public HttpEntity<?> addNews(@ModelAttribute NewsPayload newsPayload,HttpServletRequest request) throws IOException {
+        UserUtil.checkAuthorize("ADMIN","WRITER");
         MessageResp messageResp = newsService.addNews(newsPayload,request);
         return ResponseEntity.ok(messageResp);
     }
+
 }

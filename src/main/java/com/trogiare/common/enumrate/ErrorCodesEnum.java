@@ -11,7 +11,8 @@ public enum ErrorCodesEnum {
     FIND_NOT_FOUND("Not found email"),
     TOKEN_EXPIRED("Token is expired"),
     AUTHENTICATION_REQUEST_EXCEEDED("AUTHENTICATION REQUEST EXCEEDED"),
-
+    PASSWORD_HAS_BEEN_USED_BEFORE("password has been used before"),
+    PASSWORD_AND_REPASSWORD_NOT_EQUALS("password and repassword not equal"),
     SAVE_FILE_NOT_SUCCESS("save file not success"),
     EMAIL_NOT_VERIFIED("email not verified"),
     INFORMATION_USER_NOT_VALID("Thông tin tài khoản hoặc mật khẩu không chính xác"),

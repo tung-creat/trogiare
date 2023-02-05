@@ -23,6 +23,7 @@ import com.trogiare.respone.MessageResp;
 import com.trogiare.respone.PostResp;
 import com.trogiare.utils.HandleStringAndNumber;
 import com.trogiare.utils.TokenUtil;
+import com.trogiare.utils.UserUtil;
 import com.trogiare.utils.ValidateUtil;
 import jakarta.transaction.Transactional;
 import org.apache.el.parser.Token;
@@ -157,11 +158,15 @@ public class PostService {
 
     }
     public MessageResp deletePostById(String postId){
+        String userId = UserUtil.getUserId();
        Optional<Post> postOP=  postRepo.findById(postId);
        if(!postOP.isPresent()){
            throw new BadRequestException(ErrorCodesEnum.NOT_FOUND_POST);
        }
        Post post = postOP.get();
+       if(!post.getOwnerId().equals(userId)){
+           throw new BadRequestException(ErrorCodesEnum.ACCESS_DENIED);
+       }
        if(post.getStatus().equals(PostStatusEnum.DELETED.name())){
            throw new BadRequestException(ErrorCodesEnum.NOT_FOUND_POST);
        }

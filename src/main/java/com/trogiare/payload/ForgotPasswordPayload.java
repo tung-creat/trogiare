@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class ForgotPassword {
+public class ForgotPasswordPayload {
 
     @NotBlank(message="Email can not be blank")
     @Email(message="Invalid email address")

@@ -87,6 +87,7 @@ public class WebSecurityConfig extends GlobalMethodSecurityConfiguration {
                         "/image/**"
                 ).permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/v1/users/**").permitAll()
                 .requestMatchers("/swagger-resources/**",
                         "/swagger-ui.html",
                         "/v2/api-docs",

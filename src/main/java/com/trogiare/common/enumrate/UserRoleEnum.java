@@ -5,7 +5,8 @@ import java.util.Map;
 
 public enum UserRoleEnum {
     ADMIN("admin"),
-    USER("user");
+    USER("user"),
+    WRITER("writer");
     String value;
     private static Map<String,UserRoleEnum> map = new HashMap<>();
     UserRoleEnum(String value){

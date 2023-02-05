@@ -4,8 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 
 
 public class SetPassword {
-    @NotBlank(message="User ID can not be blank")
-    String uid;
+    @NotBlank(message="email can not be blank")
+    String email;
 
     @NotBlank(message="Token can not be blank")
     String token;
@@ -16,8 +16,12 @@ public class SetPassword {
     @NotBlank(message="Retype Password can not be blank")
     String retypePassword;
 
-    public String getUid() {
-        return uid;
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getToken() {
@@ -32,9 +36,6 @@ public class SetPassword {
         return retypePassword;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
 
     public void setToken(String token) {
         this.token = token;
