@@ -36,25 +36,25 @@ public class WebSecurityConfig extends GlobalMethodSecurityConfiguration {
     static final Logger logger = LoggerFactory.getLogger(WebSecurityConfig.class);
     @Autowired
     private OAuthEntryPointRest unauthorizedHandler;
-    @Value("${app.cors.allow_domain}")
-    private String allowedDomain1;
-    @Value("${app.cors.allow_domain_deploy}")
-    private String allowedDomain2;
+//    @Value("${app.cors.allow_domain}")
+//    private List<String> allowedDomain1;
+//    @Value("${app.cors.allow_domain_deploy}")
+//    private String allowedDomain2;
     @Autowired
     private LocalTokenAuth localTokenAuth;
 
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins(allowedDomain2)
-                        .allowCredentials(true);
-                registry.addMapping("/**").allowedOrigins(allowedDomain1)
-                        .allowCredentials(true);
-            }
-        };
-    }
+//    @Bean
+//    public WebMvcConfigurer corsConfigurer() {
+//        return new WebMvcConfigurer() {
+//            @Override
+//            public void addCorsMappings(CorsRegistry registry) {
+//                registry.addMapping("/**").allowedOrigins(allowedDomain2)
+//                        .allowCredentials(true);
+//                registry.addMapping("/**").allowedOrigins(allowedDomain1)
+//                        .allowCredentials(true);
+//            }
+//        };
+//    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)

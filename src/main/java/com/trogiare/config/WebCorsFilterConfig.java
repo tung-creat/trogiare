@@ -5,9 +5,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -18,25 +19,14 @@ public class WebCorsFilterConfig {
     private List<String> allowedDomain;
 
     @Bean
-    public CorsFilter corsFilter() {
-        CorsConfiguration config = new CorsConfiguration();
-        log.info("WebCorsFilterConfig allowedDomain {}", allowedDomain);
-        if(allowedDomain.contains("*")){
-            config.addAllowedOrigin("*");
-            log.info("WebCorsFilterConfig disable CORS");
-        } else {
-            config.setAllowCredentials(true);
-            config.setAllowedOriginPatterns(allowedDomain);
-        }
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("GET");
-        config.addAllowedMethod("POST");
-        config.addAllowedMethod("PUT");
-        config.addAllowedMethod("PATCH");
-        config.addAllowedMethod("DELETE");
-        config.addAllowedMethod("OPTIONS");
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(allowedDomain);
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }
