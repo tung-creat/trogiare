@@ -49,10 +49,8 @@ public class WebSecurityConfig extends GlobalMethodSecurityConfiguration {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**").allowedOrigins(allowedDomain2)
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD")
                         .allowCredentials(true);
-                registry.addMapping("/**").allowedOrigins(allowedDomain1)
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD")
+                registry.addMapping("/**").allowedOrigins(allowedDomain1
                         .allowCredentials(true);
             }
         };
