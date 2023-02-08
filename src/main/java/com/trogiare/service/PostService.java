@@ -93,11 +93,11 @@ public class PostService {
 
     public MessageResp getPosts(HttpServletRequest request ,Integer size,
                                 Integer page,String address,Long priceMin, Long priceMax,String keyword,
-                                Long areaMin, Long areaMax,Long bedRoom
+                                Long areaMin, Long areaMax,Long bedRoom,String type
                                 ) throws URISyntaxException {
       String URI_AUTHORITY = Constants.getAuthority(request);
         Pageable pageable = PageRequest.of(page,size, Sort.by("price"));
-       Page<PostAndAddress> postAndAddressPage = postRepo.getPosts(pageable,address,priceMin,priceMax,keyword,areaMin,areaMax,bedRoom);
+       Page<PostAndAddress> postAndAddressPage = postRepo.getPosts(pageable,address,priceMin,priceMax,keyword,areaMin,areaMax,bedRoom,type);
         List<PostAndAddress>  postAndAddressList =  postAndAddressPage.getContent();
        Map<String,PostResp> postRespMap = new HashMap<>();
         List<String> postIds = new ArrayList<>();
@@ -112,11 +112,16 @@ public class PostService {
         Map<String,String> ImageMap = new HashMap<>();
         for(PostIddAndPathImages x : postIdAndImageNameList){
             ImageMap.put(x.getPostId(),x.getPath());
-            System.out.println(x.getPath());
+            System.out.println(x.getTypeImage());
         }
         for(var x : ImageMap.entrySet()){
             StringBuilder nameImage = new StringBuilder(x.getValue());
-            nameImage.insert(0,URI_AUTHORITY+"/");
+            if(nameImage.toString().startsWith("/images")){
+                nameImage.insert(0,URI_AUTHORITY+"/trogiare");
+            }else{
+                nameImage.insert(0,URI_AUTHORITY+"/");
+            }
+
             ImageMap.put(x.getKey(),nameImage.toString());
         }
         for(var x : postRespMap.entrySet()){
@@ -145,11 +150,19 @@ public class PostService {
         for(PostIddAndPathImages x : postIddAndImagesList){
             if(x.getTypeImage().equals(ObjectMediaRefValueEnum.IMAGE_POST.name())){
                 StringBuilder nameImage = new StringBuilder(x.getPath());
-                nameImage.insert(0,URI_AUTHORITY+"/");
+                if(nameImage.toString().startsWith("/images")){
+                    nameImage.insert(0,URI_AUTHORITY+"/trogiare");
+                }else{
+                    nameImage.insert(0,URI_AUTHORITY+"/");
+                }
                 postResp.setImage(nameImage.toString());
             }else{
                 StringBuilder nameImage = new StringBuilder(x.getPath());
-                nameImage.insert(0,URI_AUTHORITY+"/");
+                if(nameImage.toString().startsWith("/images")){
+                    nameImage.insert(0,URI_AUTHORITY+"/trogiare");
+                }else{
+                    nameImage.insert(0,URI_AUTHORITY+"/");
+                }
                 imageDetails.add(nameImage.toString());
             }
         }

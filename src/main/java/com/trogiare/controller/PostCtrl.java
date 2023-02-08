@@ -28,6 +28,7 @@ public class PostCtrl {
     @RequestMapping(path="/filter",method = RequestMethod.GET)
     public HttpEntity<?> getAllPost(@RequestParam(required = false) Integer page ,
                                     @RequestParam(required = false) Integer size,
+                                    @RequestParam(required = false) String type,
                                     @RequestParam(required = false) String keyword,
                                     @RequestParam(required = false) String address,
                                     @RequestParam(required = false) Long priceMin,
@@ -43,7 +44,7 @@ public class PostCtrl {
             size = Constants.ITEM_PER_PAGE;
         }
 
-        MessageResp messageResp = postService.getPosts(request,size,page,address,priceMin,priceMax,keyword,areaMin,areaMax,bedRoom);
+        MessageResp messageResp = postService.getPosts(request,size,page,address,priceMin,priceMax,keyword,areaMin,areaMax,bedRoom,type);
         return ResponseEntity.ok().body(messageResp);
     }
     @RequestMapping(path="/get-post-by-id/{postId}")

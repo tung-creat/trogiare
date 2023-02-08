@@ -30,7 +30,6 @@ public class PostResp {
     private String priceUnit;
     private Long price;
     private String compactNumber;
-    private Double area;
     private Integer bedroom;
     private String description;
     private Double facade;
@@ -45,6 +44,10 @@ public class PostResp {
     private String ownerId;
     private PostTypeEnum typePost;
     private String postCode;
+
+    private Double useableArea;
+
+    private Double landArea;
     private LocalDateTime updatedTime;
     private Address address;
     private String image;
@@ -56,7 +59,6 @@ public class PostResp {
         this.priceUnit = post.getPriceUnit();
         this.price = post.getPrice();
         this.compactNumber = post.getCompactNumber();
-        this.area = post.getArea();
         this.bedroom = post.getBedroom();
         this.description = post.getDescription();
         this.facade = post.getFacade();
@@ -72,5 +74,7 @@ public class PostResp {
         this.expirationDate = post.getExpirationDate();
         this.postCode = post.getPostCode();
         this.typePost = post.getTypePost();
+        this.landArea = post.getLandArea();
+        this.useableArea = post.getUseableArea();
     }
 }

@@ -1,5 +1,5 @@
 package com.trogiare.common.enumrate;
 
 public enum ObjectTypeEnum {
-    USER,POST,BLOG
+    USER,POST,NEWS
 }

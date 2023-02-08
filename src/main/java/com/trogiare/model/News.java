@@ -32,8 +32,5 @@ public class News implements Serializable {
     @Column(name="status_news")
     @Enumerated(EnumType.STRING)
     private NewsStatusEnum statusNews;
-    @Column(nullable = false,length = 800)
-    private String favicon;
-    @Column(nullable = false,length = 800)
-    private String imageAvatar;
+
 }

@@ -20,6 +20,33 @@ public class HandleStringAndNumber {
         temp = pattern.matcher(temp).replaceAll("");
         return temp.toLowerCase().replaceAll("đ", "d").replaceAll("\\s+", "-").replaceAll("[^a-zA-Z0-9 ]","-").trim();
     }
+    public static Long getNumberFromString(String s){
+        String[] x = s.split(" ");
+        Long number = convertStringToNumber(Long.valueOf(x[0]),x[1]);
+        for(int i = 2 ;i < x.length;i++){
+            if(i % 2== 0){
+                number += convertStringToNumber(Long.valueOf(x[i]),x[i+1]);
+          }
+        }
+        return number;
+    }
+    private static Long convertStringToNumber(Long x , String y){
+
+        switch(y.toLowerCase()){
+            case "tỷ":
+              x = Math.round(x * Math.pow(10, 9));
+              return x;
+            case "triệu":
+                x =  Math.round(x * Math.pow(10, 6));
+                return x;
+            case "nghìn":
+                x = Math.round(x*Math.pow(10,3));
+                return x;
+            default:
+                return x;
+
+        }
+    }
 
     //    }
     public static String  compactNumber(Long number) {

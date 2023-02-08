@@ -23,9 +23,10 @@ public interface PostRepo extends PagingAndSortingRepository<Post, String>, List
                     "and (:priceMin is null or :priceMin <= p.price)" +
                     "and (:priceMax is null or :priceMax >= p.price)" +
                     "and (:keyword is null or p.description like concat('%',:keyword,'%'))" +
-                    "and (:areaMin is null or p.area >= :areaMin)" +
-                    "and (:areaMax is null or p.area <= :areaMax)" +
-                    "and (:bedRoom is null or p.bedroom = :bedRoom)")
+                    "and (:areaMin is null or p.useableArea >= :areaMin)" +
+                    "and (:areaMax is null or p.useableArea <= :areaMax)" +
+                    "and (:bedRoom is null or p.bedroom = :bedRoom)" +
+                    "and (:type is null or p.typePost = :type)")
     Page<PostAndAddress> getPosts(Pageable pageable,
                                   @Param("address") String address,
                                   @Param("priceMin") Long priceMin,
@@ -33,7 +34,8 @@ public interface PostRepo extends PagingAndSortingRepository<Post, String>, List
                                   @Param("keyword") String keyword,
                                   @Param("areaMin") Long areaMin,
                                   @Param("areaMax") Long areaMax,
-                                  @Param("bedRoom") Long bedRoom);
+                                  @Param("bedRoom") Long bedRoom,
+                                  @Param("type") String type);
 
     @Query(value =
             "SELECT p as post,ad as address " +

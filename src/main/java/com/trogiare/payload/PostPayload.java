@@ -27,6 +27,8 @@ public class PostPayload {
     @NotBlank(message = "village not blank")
     private String village;
     private String priceUnit;
+    private Double useableArea;
+    private Double landArea;
     private Long price;
     @NotBlank(message = "area is not blank")
     private Double area;

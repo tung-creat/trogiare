@@ -1,11 +1,14 @@
 package com.trogiare;
 
-import com.trogiare.repo.EmailTemplateRepo;
-import com.trogiare.repo.PostRepo;
+import com.trogiare.component.PostCodeComponent;
+import com.trogiare.repo.*;
+//import com.trogiare.service.WebCrawlerThread;
+import com.trogiare.service.WebCrawlerThread;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -14,11 +17,21 @@ import java.util.List;
 @SpringBootApplication
 @EnableTransactionManagement
 @EnableAsync
+
 public class TrogiareApplication {
-    @Autowired
-    private EmailTemplateRepo mailTemplateRepo;
+//    @Autowired
+//    private EmailTemplateRepo mailTemplateRepo;
     @Autowired
     private PostRepo postRepo;
+    @Autowired
+    private AddressRepo addressRepo;
+    @Autowired
+    private FileSystemRepo fileSystemRepo;
+    @Autowired
+    private ObjectMediaRepo objectMediaRepo;
+    @Autowired
+    private PostCodeComponent postCodeComponent;
+
     public static void main(String[] args) {
         SpringApplication.run(TrogiareApplication.class, args);
     }
@@ -120,4 +133,14 @@ public class TrogiareApplication {
 //
 //        };
 //    }
+
+//    @Bean
+//    public CommandLineRunner commandLineRunner() {
+//        return args -> {
+//            new WebCrawlerThread("https://mogi.vn/mua-nha-dat",addressRepo,postRepo
+//                    ,fileSystemRepo,objectMediaRepo,
+//                    postCodeComponent);
+//
+//        };
+//}
 }

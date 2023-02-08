@@ -1,5 +1,6 @@
 package com.trogiare.repo;
 
+import com.trogiare.common.enumrate.ObjectMediaRefValueEnum;
 import com.trogiare.model.ObjectMedia;
 
 import com.trogiare.model.impl.PostIddAndPathImages;

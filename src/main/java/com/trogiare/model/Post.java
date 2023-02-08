@@ -33,7 +33,11 @@ public class Post implements Serializable {
     private Long price;
     @Column(name="compact_number")
     private String compactNumber;
-    private Double area;
+    @Column(name="useable_area")
+    private Double useableArea;
+    @Column(name="land_area")
+    private Double landArea;
+
     private Integer bedroom;
     @Lob
     @Column(name="description",columnDefinition = "TEXT")
@@ -64,7 +68,8 @@ public class Post implements Serializable {
 
 
     public void setInformationFromPayLoad(PostPayload payload){
-        this.setArea(payload.getArea());
+        this.setLandArea(payload.getLandArea());
+        this.setUseableArea(payload.getUseableArea());
         this.setBedroom(payload.getBedroom());
         this.setName(payload.getName());
         this.setDescription(payload.getDescription());

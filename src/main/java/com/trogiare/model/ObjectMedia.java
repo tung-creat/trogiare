@@ -1,5 +1,7 @@
 package com.trogiare.model;
 
+import com.trogiare.common.enumrate.ObjectMediaRefValueEnum;
+import com.trogiare.common.enumrate.ObjectTypeEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
