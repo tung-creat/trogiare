@@ -16,6 +16,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
@@ -31,7 +34,7 @@ import java.time.Instant;
 import java.util.*;
 
 @Component
-public class LocalTokenAuth extends OncePerRequestFilter {
+public class LocalTokenAuth extends OncePerRequestFilter{
     static final Logger logger = LoggerFactory.getLogger(LocalTokenAuth.class);
     @Autowired
     private LocalTokenProvider tokenProvider;

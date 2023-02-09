@@ -7,6 +7,9 @@ public enum PostTypeEnum {
     RENT,SELL_HOUSE;
     private static Map<String,PostTypeEnum> map = new HashMap<>();
     public static PostTypeEnum getEnum(String value){
+        if(value ==null){
+            return null;
+        }
         if(map.size() != 0){
             return map.get(value.toUpperCase());
         }

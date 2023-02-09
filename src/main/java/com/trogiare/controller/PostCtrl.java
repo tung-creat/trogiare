@@ -48,6 +48,7 @@ public class PostCtrl {
         if(size == null){
             size = Constants.ITEM_PER_PAGE;
         }
+
         MessageResp messageResp = postService.getPosts(request,size,page,address,priceMin,priceMax,keyword,areaMin,areaMax,bedRoom,PostTypeEnum.getEnum(type));
         return ResponseEntity.ok().body(messageResp);
     }
