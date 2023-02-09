@@ -1,10 +1,7 @@
 package com.trogiare.service;
 
 import com.trogiare.common.Constants;
-import com.trogiare.common.enumrate.ErrorCodesEnum;
-import com.trogiare.common.enumrate.ObjectMediaRefValueEnum;
-import com.trogiare.common.enumrate.ObjectTypeEnum;
-import com.trogiare.common.enumrate.PostStatusEnum;
+import com.trogiare.common.enumrate.*;
 import com.trogiare.component.PostCodeComponent;
 import com.trogiare.controller.SaveFileCtrl;
 import com.trogiare.exception.BadRequestException;
@@ -91,9 +88,9 @@ public class PostService {
         return MessageResp.ok(post);
     }
 
-    public MessageResp getPosts(HttpServletRequest request ,Integer size,
-                                Integer page,String address,Long priceMin, Long priceMax,String keyword,
-                                Long areaMin, Long areaMax,Long bedRoom,String type
+    public MessageResp getPosts(HttpServletRequest request , Integer size,
+                                Integer page, String address, Long priceMin, Long priceMax, String keyword,
+                                Long areaMin, Long areaMax, Long bedRoom, PostTypeEnum type
                                 ) throws URISyntaxException {
       String URI_AUTHORITY = Constants.getAuthority(request);
         Pageable pageable = PageRequest.of(page,size, Sort.by("price"));

@@ -1,6 +1,7 @@
 package com.trogiare.controller;
 
 import com.trogiare.common.Constants;
+import com.trogiare.common.enumrate.PostTypeEnum;
 import com.trogiare.payload.PostPayload;
 import com.trogiare.respone.MessageResp;
 import com.trogiare.service.PostService;
@@ -28,7 +29,7 @@ public class PostCtrl {
     @RequestMapping(path="/filter",method = RequestMethod.GET)
     public HttpEntity<?> getAllPost(@RequestParam(required = false) Integer page ,
                                     @RequestParam(required = false) Integer size,
-                                    @RequestParam(required = false) String type,
+                                    @RequestParam(required = false,name = "type") String type,
                                     @RequestParam(required = false) String keyword,
                                     @RequestParam(required = false) String address,
                                     @RequestParam(required = false) Long priceMin,
@@ -43,8 +44,7 @@ public class PostCtrl {
         if(size == null){
             size = Constants.ITEM_PER_PAGE;
         }
-
-        MessageResp messageResp = postService.getPosts(request,size,page,address,priceMin,priceMax,keyword,areaMin,areaMax,bedRoom,type);
+        MessageResp messageResp = postService.getPosts(request,size,page,address,priceMin,priceMax,keyword,areaMin,areaMax,bedRoom,PostTypeEnum.getEnum(type));
         return ResponseEntity.ok().body(messageResp);
     }
     @RequestMapping(path="/get-post-by-id/{postId}")

@@ -3,6 +3,7 @@ package com.trogiare.service;
 import com.trogiare.common.enumrate.ObjectMediaRefValueEnum;
 import com.trogiare.common.enumrate.ObjectTypeEnum;
 import com.trogiare.common.enumrate.PostStatusEnum;
+import com.trogiare.common.enumrate.PostTypeEnum;
 import com.trogiare.component.PostCodeComponent;
 import com.trogiare.model.Address;
 import com.trogiare.model.FileSystem;
@@ -85,10 +86,10 @@ public class WebCrawlerThread implements Runnable {
 
     private void handleProcessing(Document document) {
         Random random = new Random();
-        int min = 100;
-        int max = 200;
+        int min = 15;
+        int max = 100;
         int min1 = 1;
-        int max1 = 6;
+        int max1 = 3;
         Elements elementImg = document.select("div.media-item img");
         String addressDetails = document.select("div.main-info .address").text();
         String[] informationDetail = addressDetails.split(",");
@@ -118,14 +119,14 @@ public class WebCrawlerThread implements Runnable {
         post.setExpirationDate(LocalDateTime.now().plusDays(10));
         post.setUpdatedTime(LocalDateTime.now());
         post.setCreatedTime(LocalDateTime.now());
+        post.setTypePost(PostTypeEnum.RENT);
         post.setOwnerId("40288285862b541001862b55a3900000");
         post.setAddressId(address.getId());
         post.setPrice(price);
         post.setName(title);
         post.setCompactNumber(priceCompact);
         post.setToilet(random.nextInt(max1 - min1 + 1) + min1);
-        post.setJuridical(juridical);
-        post.setLandArea(landAble);
+        post.setLandArea(null);
         post.setBedroom(bedRoom);
         post.setDescription(description);
         postRepo.save(post);

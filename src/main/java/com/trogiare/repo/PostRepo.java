@@ -1,5 +1,6 @@
 package com.trogiare.repo;
 
+import com.trogiare.common.enumrate.PostTypeEnum;
 import com.trogiare.model.Post;
 import com.trogiare.model.User;
 import com.trogiare.model.impl.PostAndAddress;
@@ -35,7 +36,7 @@ public interface PostRepo extends PagingAndSortingRepository<Post, String>, List
                                   @Param("areaMin") Long areaMin,
                                   @Param("areaMax") Long areaMax,
                                   @Param("bedRoom") Long bedRoom,
-                                  @Param("type") String type);
+                                  @Param("type") PostTypeEnum type);
 
     @Query(value =
             "SELECT p as post,ad as address " +

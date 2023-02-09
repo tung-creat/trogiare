@@ -137,7 +137,7 @@ public class TrogiareApplication {
 //    @Bean
 //    public CommandLineRunner commandLineRunner() {
 //        return args -> {
-//            new WebCrawlerThread("https://mogi.vn/mua-nha-dat",addressRepo,postRepo
+//            new WebCrawlerThread("https://mogi.vn/thue-nha-dat",addressRepo,postRepo
 //                    ,fileSystemRepo,objectMediaRepo,
 //                    postCodeComponent);
 //
