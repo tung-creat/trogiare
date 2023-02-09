@@ -2,13 +2,13 @@ package com.trogiare.config;
 
 import com.trogiare.common.enumrate.ErrorCodesEnum;
 import com.trogiare.exception.BadRequestException;
+import com.trogiare.exception.InputInvalidException;
 import com.trogiare.exception.SendMailVerificationFailException;
 import com.trogiare.respone.MessageResp;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.JDBCException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
@@ -21,6 +21,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.HashMap;
+import java.util.Map;
 
 @ControllerAdvice
 @Slf4j
@@ -30,7 +32,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     public ResponseEntity<Object> handleException(Exception ex) {
         log.error("unexpect exception ", ex);
         return ResponseEntity.internalServerError()
-                .body(MessageResp.error(ErrorCodesEnum.INVALID_INPUT_PARAMETER.name(), ex.getMessage()));
+                .body(MessageResp.error(ErrorCodesEnum.INTERNAL_SERVER_ERROR.name(), ex.getMessage()));
     }
 
     @ExceptionHandler({AccessDeniedException.class})
@@ -48,7 +50,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     }
 
     @Override
-    protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         return ResponseEntity.badRequest().body(MessageResp.error(ErrorCodesEnum.INVALID_INPUT_PARAMETER));
     }
 
@@ -66,8 +68,8 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
-    @ExceptionHandler({com.trogiare.exception.InputInvalidException.class})
-    public ResponseEntity<Object> handleInputInvalidException(com.trogiare.exception.InputInvalidException ex) {
+    @ExceptionHandler({InputInvalidException.class})
+    public ResponseEntity<Object> handleInputInvalidException(InputInvalidException ex) {
         MessageResp errorResponse = new MessageResp();
         errorResponse.setResponseCode(ErrorCodesEnum.INVALID_INPUT_PARAMETER.name());
         errorResponse.setResponseDesc(ex.getMessage());
@@ -81,9 +83,10 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         errorResponse.setResponseDesc(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase() + ": Try again!");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
+
     // handle invalid payload
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String desc = null;
         if(ex.getBindingResult() != null
                 && ex.getBindingResult().getFieldErrors() != null
@@ -93,7 +96,4 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(MessageResp.error(ErrorCodesEnum.INVALID_INPUT_PARAMETER.name(), desc));
     }
-
-
-
 }

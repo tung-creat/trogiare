@@ -1,12 +1,12 @@
 package com.trogiare.model;
 
-import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.cglib.core.Local;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -16,9 +16,9 @@ import java.time.LocalDateTime;
 @Setter
 public class UserToken implements Serializable {
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid")
-    @Column(columnDefinition = "CHAR(36)")
+    @GeneratedValue(generator = "objectid-generator")
+    @GenericGenerator(name = "objectid-generator", strategy = "com.trogiare.common.ObjectIDGenerator")
+    @Column(unique = true, nullable = false, length = 24)
     private String id;
     @Column(name="user_id",nullable = false)
     private String userId;

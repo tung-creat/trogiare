@@ -8,6 +8,7 @@ import com.trogiare.component.ConvertByteToMB;
 import com.trogiare.model.FileSystem;
 import com.trogiare.security.LocalTokenProvider;
 import com.trogiare.utils.HandleStringAndNumber;
+import com.trogiare.utils.IdUtil;
 import com.trogiare.utils.TokenUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +35,7 @@ public class GcsService {
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
         Blob blob = storage.create(blobInfo, file.getBytes());
         FileSystem fileSystem = new FileSystem();
-        fileSystem.setId(TokenUtil.generateToken(36));
+        fileSystem.setId(IdUtil.generate());
         fileSystem.setSize(String.valueOf(convertByteToMB.getSize(file.getSize())));
         fileSystem.setPath(path);
         fileSystem.setCreatedTime(LocalDateTime.now());
@@ -47,8 +48,5 @@ public class GcsService {
         Blob blob = storage.get(blobId);
         byte[] result = blob.getContent();
         return result;
-
     }
-
-
 }

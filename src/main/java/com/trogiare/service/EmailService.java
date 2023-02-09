@@ -6,14 +6,14 @@ import com.trogiare.config.ServerProperties;
 import com.trogiare.model.EmailTemplate;
 import com.trogiare.model.User;
 import com.trogiare.repo.EmailTemplateRepo;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
@@ -98,7 +98,7 @@ public class EmailService {
         if (map.size() > 0 && !map.isEmpty()) {
           return  map.get(typeEmailTemplate);
         }
-        List<EmailTemplate> emailTemplateList = emailTemplateRepo.findAll();
+        List<EmailTemplate> emailTemplateList = (List<EmailTemplate>) emailTemplateRepo.findAll();
         map = emailTemplateList.stream()
                 .collect(Collectors.toMap(EmailTemplate::getCode, Function.identity()));
         return map.get(typeEmailTemplate);

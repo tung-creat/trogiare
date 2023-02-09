@@ -1,7 +1,7 @@
 package com.trogiare.model;
 
 import com.trogiare.common.enumrate.NewsStatusEnum;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import java.io.Serializable;
@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
 @Data
 public class News implements Serializable {
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid")
-    @Column(columnDefinition = "CHAR(36)")
+    @GeneratedValue(generator = "objectid-generator")
+    @GenericGenerator(name = "objectid-generator", strategy = "com.trogiare.common.ObjectIDGenerator")
+    @Column(unique = true, nullable = false, length = 24)
     private String id;
     @Column(name="author_id",nullable = false)
     private String authorId;

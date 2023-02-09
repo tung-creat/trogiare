@@ -2,7 +2,7 @@ package com.trogiare.model;
 
 import com.trogiare.common.enumrate.ObjectMediaRefValueEnum;
 import com.trogiare.common.enumrate.ObjectTypeEnum;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,9 +15,9 @@ import org.hibernate.annotations.GenericGenerator;
 @AllArgsConstructor
 public class ObjectMedia {
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid")
-    @Column(columnDefinition = "CHAR(36)")
+    @GeneratedValue(generator = "objectid-generator")
+    @GenericGenerator(name = "objectid-generator", strategy = "com.trogiare.common.ObjectIDGenerator")
+    @Column(unique = true, nullable = false, length = 24)
     private String id;
     private String objectId;
     private String objectType;

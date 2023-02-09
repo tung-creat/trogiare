@@ -20,8 +20,7 @@ import com.trogiare.service.GcsService;
 import com.trogiare.utils.TokenUtil;
 import com.trogiare.utils.UserUtil;
 import com.trogiare.utils.ValidateUtil;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +34,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ public class UserCtrl {
     private UserRoleRepo userRoleRepo;
 
     @RequestMapping(path = "", method = RequestMethod.GET)
-
+    @ApiOperation(value = "get ALl user", response = MessageResp.class)
     public HttpEntity<?> getAll(@RequestParam(required = false) Integer page,
                                 @RequestParam(required = false) Integer size) {
         UserUtil.checkAuthorize("ADMIN");
@@ -87,6 +88,7 @@ public class UserCtrl {
     }
 
     @RequestMapping(path = "/addRole", method = RequestMethod.POST)
+    @ApiOperation(value = "add Role to user", response = MessageResp.class)
     public HttpEntity<?> addRoleForUser(@Valid @RequestBody UserAddRolePayload payload) {
         UserUtil.checkAuthorize("ADMIN");
         Optional<User> userOp = userRepo.findById(payload.getUserId());
@@ -102,7 +104,8 @@ public class UserCtrl {
     }
 
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public HttpEntity<Object> getById(@PathVariable("id") String id,HttpServletRequest request) {
+    @ApiOperation(value = "get user by id", response = MessageResp.class)
+    public HttpEntity<Object> getById(@PathVariable("id") String id, HttpServletRequest request) {
         if (ValidateUtil.isEmpty(id)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(MessageResp.error(ErrorCodesEnum.INVALID_ID));
         }
@@ -119,6 +122,7 @@ public class UserCtrl {
     }
 
     @RequestMapping(path = "", method = RequestMethod.PUT)
+    @ApiOperation(value = "update user", response = MessageResp.class)
     public HttpEntity<Object> updateUser(@Valid @ModelAttribute UserFormPayload payload) throws IOException {
         String uid = UserUtil.getUserId();
         Optional<User> userOp = userRepo.getUserExists(payload.getUsername(), payload.getSdt(), payload.getEmail());
@@ -153,6 +157,7 @@ public class UserCtrl {
     }
 
     @RequestMapping(path = "/change-password", method = RequestMethod.PUT)
+    @ApiOperation(value = "change password user", response = MessageResp.class)
     public HttpEntity<Object> changePassword(@Valid @RequestBody ChangePassword payload) {
         String uid = UserUtil.getUserId();
         Optional<User> userOpt = userRepo.findById(uid);

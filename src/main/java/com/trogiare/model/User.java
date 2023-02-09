@@ -1,7 +1,8 @@
 package com.trogiare.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
+import javax.persistence.*;
+import javax.validation.constraints.Email;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,9 +19,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class User implements Serializable {
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid")
-    @Column(columnDefinition = "CHAR(36)")
+    @GeneratedValue(generator = "objectid-generator")
+    @GenericGenerator(name = "objectid-generator", strategy = "com.trogiare.common.ObjectIDGenerator")
+    @Column(unique = true, nullable = false, length = 24)
     private String id;
     @Column(name="first_name",nullable = false)
     private String firstName;

@@ -13,7 +13,9 @@ import com.trogiare.respone.UserResp;
 import com.trogiare.security.LocalTokenProvider;
 import com.trogiare.utils.TokenUtil;
 import com.trogiare.utils.ValidateUtil;
-import jakarta.validation.Valid;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,7 +41,9 @@ public class AuthenCtrl {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private LocalTokenProvider localTokenProvider;
+
     @RequestMapping(path="/local",method = RequestMethod.POST)
+    @ApiOperation(value = "login", response = MessageResp.class)
     public HttpEntity<?> localAuthen(@Valid @RequestBody UserLogin payload){
         if(ValidateUtil.isEmpty(payload.getUserName()) || ValidateUtil.isEmpty(payload.getPassword())){
             throw new BadRequestException(ErrorCodesEnum.INVALID_INPUT);

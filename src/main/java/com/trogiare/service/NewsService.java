@@ -15,12 +15,12 @@ import com.trogiare.repo.ObjectMediaRepo;
 import com.trogiare.respone.MessageResp;
 import com.trogiare.utils.HandleStringAndNumber;
 import com.trogiare.utils.UserUtil;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;

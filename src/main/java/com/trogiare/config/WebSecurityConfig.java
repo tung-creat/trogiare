@@ -19,6 +19,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -31,7 +32,7 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
-public class WebSecurityConfig extends GlobalMethodSecurityConfiguration {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     static final Logger logger = LoggerFactory.getLogger(WebSecurityConfig.class);
     @Autowired
@@ -62,8 +63,8 @@ public class WebSecurityConfig extends GlobalMethodSecurityConfiguration {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    @Override
+    public void configure(HttpSecurity http) throws Exception {
         logger.info("Configuration for http security");
         http
                 .cors()
@@ -71,10 +72,10 @@ public class WebSecurityConfig extends GlobalMethodSecurityConfiguration {
                 .csrf().disable().exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()//
-//                .requestMatchers( "/", "/favicon.ico", "/**/*.png",
-//                        "/**/*.gif", "/**/*.svg", "/**/*.jpg", "/**/*.html", "/**/*.css",
-//                        "/**/*.js", "/api/v1/socks/**").permitAll()
-                .requestMatchers("/login/**",
+                .antMatchers( "/", "/favicon.ico", "/**/*.png",
+                        "/**/*.gif", "/**/*.svg", "/**/*.jpg", "/**/*.html", "/**/*.css",
+                        "/**/*.js", "/api/v1/socks/**").permitAll()
+                .antMatchers("/login/**",
                         "/api/v1/login/**",
                         "/api/v1/auth/**",
                         "/logout/**",
@@ -84,26 +85,15 @@ public class WebSecurityConfig extends GlobalMethodSecurityConfiguration {
                         "/api/v1/provinces/**",
                         "/image/**"
                 ).permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
-                .requestMatchers(HttpMethod.GET,"/api/v1/users/**").permitAll()
-                .requestMatchers("/swagger-resources/**",
+                .antMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/api/v1/users/**").permitAll()
+                .antMatchers("/swagger-resources/**",
                         "/swagger-ui.html",
                         "/v2/api-docs",
                         "/webjars/**").permitAll()
-                .requestMatchers("/api/v1/**").authenticated()
+                .antMatchers("/api/v1/**").authenticated()
                 .and()
-                .addFilterBefore(localTokenAuth, UsernamePasswordAuthenticationFilter.class)
-        ;
-
-
-        return http.build();
+                .addFilterBefore(localTokenAuth, UsernamePasswordAuthenticationFilter.class);
     }
 
-
-    @Bean
-    public BasicAuthenticationEntryPoint swaggerAuthenticationEntryPoint() {
-        BasicAuthenticationEntryPoint entryPoint = new BasicAuthenticationEntryPoint();
-        entryPoint.setRealmName("Swagger Realm");
-        return entryPoint;
-    }
 }

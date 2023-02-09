@@ -11,13 +11,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.List;
 
 @SpringBootApplication
 @EnableTransactionManagement
 @EnableAsync
-
 public class TrogiareApplication {
 //    @Autowired
 //    private EmailTemplateRepo mailTemplateRepo;

@@ -5,7 +5,6 @@ import com.trogiare.model.ObjectMedia;
 
 import com.trogiare.model.impl.PostIddAndPathImages;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ObjectMediaRepo extends PagingAndSortingRepository<ObjectMedia,String>, ListCrudRepository<ObjectMedia,String> {
+public interface ObjectMediaRepo extends PagingAndSortingRepository<ObjectMedia,String> {
     @Query(value="select ob.objectId as postId,ob.refType as typeImage,f.path as path" +
             " from ObjectMedia ob left join FileSystem f " +
             " on ob.mediaId = f.id where ob.objectId in :listPostId " +

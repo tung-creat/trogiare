@@ -1,8 +1,11 @@
 package com.trogiare.payload.news;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 @Data
 public class NewsPayload {
     @NotBlank(message ="title not blank")

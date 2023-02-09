@@ -3,8 +3,6 @@ package com.trogiare.respone;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.trogiare.model.User;
-import jakarta.persistence.Column;
-import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,9 +27,7 @@ public class UserResp implements Serializable {
     private String sdt;
     private String status;
     private String avatar;
-    @Column(name ="created_time")
     private LocalDateTime createdTime;
-    @Column(name="updated_time")
     private LocalDateTime updatedTime;
     private String token;
     private List<String> roles;

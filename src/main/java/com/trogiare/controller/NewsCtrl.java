@@ -12,8 +12,7 @@ import com.trogiare.service.GcsService;
 import com.trogiare.service.NewsService;
 import com.trogiare.utils.HandleStringAndNumber;
 import com.trogiare.utils.UserUtil;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.transaction.Transactional;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +23,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.io.IOException;
 
 @RestController
@@ -39,6 +40,7 @@ public class NewsCtrl {
 
     @Transactional
     @RequestMapping(path = "/upload-image-blog", method = RequestMethod.POST)
+    @ApiOperation(value = "upload image blog then get url image", response = MessageResp.class)
     public HttpEntity<?> uploadImage(@RequestParam("file") MultipartFile file, @RequestParam("nameBlog") String nameBlog, HttpServletRequest request) throws IOException {
         if (!(file.getContentType().equals(MediaType.IMAGE_PNG_VALUE) ||
                 file.getContentType().equals(MediaType.IMAGE_JPEG_VALUE))) {
@@ -52,7 +54,8 @@ public class NewsCtrl {
         return ResponseEntity.ok().body(x.toString());
     }
     @RequestMapping(path="",method = RequestMethod.POST)
-    public HttpEntity<?> addNews(@ModelAttribute NewsPayload newsPayload,HttpServletRequest request) throws IOException {
+    @ApiOperation(value = "add news blog", response = MessageResp.class)
+    public HttpEntity<?> addNews(@ModelAttribute NewsPayload newsPayload, HttpServletRequest request) throws IOException {
         UserUtil.checkAuthorize("ADMIN","WRITER");
         MessageResp messageResp = newsService.addNews(newsPayload,request);
         return ResponseEntity.ok(messageResp);

@@ -7,7 +7,6 @@ import com.trogiare.model.impl.PostAndAddress;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 import java.util.Optional;
 
-public interface PostRepo extends PagingAndSortingRepository<Post, String>, ListCrudRepository<Post, String> {
+public interface PostRepo extends PagingAndSortingRepository<Post, String> {
     @Query(value =
             "SELECT p as post,ad as address " +
                     "FROM Post p LEFT JOIN Address ad ON ad.id = p.addressId " +

@@ -1,9 +1,9 @@
 package com.trogiare.common;
 
 import com.trogiare.utils.ValidateUtil;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class Constants {
     public static Integer ITEM_PER_PAGE = 20;

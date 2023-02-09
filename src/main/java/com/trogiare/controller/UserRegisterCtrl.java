@@ -14,9 +14,7 @@ import com.trogiare.repo.UserRoleRepo;
 import com.trogiare.repo.UserTokenRepo;
 import com.trogiare.service.EmailService;
 import com.trogiare.utils.TokenUtil;
-import jakarta.mail.MessagingException;
-import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.trogiare.respone.MessageResp;
@@ -27,6 +25,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
+import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -49,7 +50,8 @@ public class UserRegisterCtrl {
     private EmailService emailService;
     @Transactional
     @RequestMapping(path="",method = RequestMethod.POST)
-    public HttpEntity<?> register(@Valid @RequestBody UserPayload payload,@RequestHeader(value = "Referer", required = false) String referer) throws MessagingException, URISyntaxException {
+    @ApiOperation(value = "register user", response = MessageResp.class)
+    public HttpEntity<?> register(@Valid @RequestBody UserPayload payload, @RequestHeader(value = "Referer", required = false) String referer) throws MessagingException, URISyntaxException {
         if(!payload.getRePassword().equals(payload.getPassword())){
             return ResponseEntity.status(400).body(MessageResp.error(ErrorCodesEnum.REPASSWORD_NOT_EQUALS_PASSWORD));
         }
@@ -97,6 +99,7 @@ public class UserRegisterCtrl {
         return ResponseEntity.ok().body(MessageResp.ok());
     }
     @RequestMapping(path = "/confirm", method = RequestMethod.POST)
+    @ApiOperation(value = "confirm user", response = MessageResp.class)
     public HttpEntity<Object> emailConfirm(@Valid @RequestBody VerifyEmail payload) throws MessagingException {
         Optional<UserToken> userTokenOtp =  userTokenRepo.findByToken(payload.getToken());
         if(!userTokenOtp.isPresent()){
@@ -131,6 +134,7 @@ public class UserRegisterCtrl {
     }
 
     @RequestMapping(path = "/resend/confirm", method = RequestMethod.POST)
+    @ApiOperation(value = "resend confim ", response = MessageResp.class)
     public HttpEntity<Object> resendEmailConfirm(@RequestHeader(value = "Referer", required = false) String referer,@Valid @RequestBody ForgotPasswordPayload payload) throws MessagingException, URISyntaxException {
         String email = payload.getEmail();
         Optional<User> opUser = userRepo.findByUsernameOrEmail(email);
@@ -180,6 +184,7 @@ public class UserRegisterCtrl {
     }
 
     @RequestMapping(path = "/forgot-password", method = RequestMethod.POST)
+    @ApiOperation(value = "forgot password", response = MessageResp.class)
     public HttpEntity<Object> forgotPassword(@Valid @RequestBody ForgotPasswordPayload payload) throws MessagingException {
         log.info("forgotPass: {}", payload);
         String email = payload.getEmail().trim().toLowerCase();
@@ -208,6 +213,7 @@ public class UserRegisterCtrl {
     }
 
     @RequestMapping(path = "/forgot-password/set-new", method = RequestMethod.POST)
+    @ApiOperation(value = "set new password affter request forgot password", response = MessageResp.class)
     public HttpEntity<Object> setNewPasswordByToken(@Valid @RequestBody SetPassword payload) {
         if (!payload.getYourPassword().equals(payload.getRetypePassword())) {
             log.info("Password can NOT be empty, Password and Retype password must be matched each other");

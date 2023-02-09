@@ -2,14 +2,11 @@ package com.trogiare.payload;
 
 import com.trogiare.common.enumrate.PostDirectionHouseEnum;
 import com.trogiare.common.enumrate.PostTypeEnum;
-import jakarta.persistence.Column;
-import jakarta.persistence.Lob;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
 
