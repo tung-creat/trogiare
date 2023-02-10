@@ -21,7 +21,7 @@ import java.net.URISyntaxException;
 public class PostCtrl {
     @Autowired
     private PostService postService;
-    @RequestMapping(path="/",method = RequestMethod.POST)
+    @RequestMapping(path="",method = RequestMethod.POST)
     @ApiOperation(value = "save post", response = MessageResp.class)
     public HttpEntity<?> savePost(@ModelAttribute PostPayload payload) throws IOException {
         String uid = UserUtil.getUserId();

@@ -4,6 +4,7 @@ import com.trogiare.common.Constants;
 import com.trogiare.common.enumrate.ErrorCodesEnum;
 import com.trogiare.exception.BadRequestException;
 import com.trogiare.model.FileSystem;
+import com.trogiare.payload.news.DeleteFormNewsPayload;
 import com.trogiare.payload.news.NewsPayload;
 import com.trogiare.repo.FileSystemRepo;
 import com.trogiare.respone.MessageResp;
@@ -25,12 +26,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/api/v1/blogs")
+@RequestMapping("/api/v1/news")
 public class NewsCtrl {
-    static final Logger logger = LoggerFactory.getLogger(NewsCtrl.class);
+    static final  Logger logger = LoggerFactory.getLogger(NewsCtrl.class);
     @Autowired
     private GcsService gcsService;
     @Autowired
@@ -54,11 +56,24 @@ public class NewsCtrl {
         return ResponseEntity.ok().body(x.toString());
     }
     @RequestMapping(path="",method = RequestMethod.POST)
-    @ApiOperation(value = "add news blog", response = MessageResp.class)
-    public HttpEntity<?> addNews(@ModelAttribute NewsPayload newsPayload, HttpServletRequest request) throws IOException {
+    @ApiOperation(value = "add news ", response = MessageResp.class)
+    public HttpEntity<?> addNews(@Valid @ModelAttribute NewsPayload newsPayload) throws IOException {
         UserUtil.checkAuthorize("ADMIN","WRITER");
-        MessageResp messageResp = newsService.addNews(newsPayload,request);
+        MessageResp messageResp = newsService.addNews(newsPayload);
         return ResponseEntity.ok(messageResp);
+    }
+    @RequestMapping(path="",method = RequestMethod.PUT)
+    @ApiOperation(value = "update news ",response = MessageResp.class)
+    public HttpEntity<?> updateNews(@Valid @ModelAttribute NewsPayload newsPayload,HttpServletRequest request) throws IOException {
+        UserUtil.checkAuthorize("ADMIN","WRITER");
+        MessageResp messageResp = newsService.updateNews(newsPayload,request);
+        return ResponseEntity.ok().body(messageResp);
+    }
+    @RequestMapping(path="",method = RequestMethod.DELETE)
+    @ApiOperation(value = "delete news ",response = MessageResp.class)
+    public HttpEntity<?> deleteNews(@Valid @RequestBody DeleteFormNewsPayload payload){
+        MessageResp messageResp = newsService.deletedNews(payload.getNewsId());
+        return ResponseEntity.ok().body(messageResp);
     }
 
 }

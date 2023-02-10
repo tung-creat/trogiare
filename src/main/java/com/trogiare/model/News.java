@@ -24,9 +24,9 @@ public class News implements Serializable {
     @Column(nullable = false,length = 1200)
     private String shortDescription;
     @Lob
-    @Column(name="content",columnDefinition = "TEXT")
     private String content;
     private LocalDateTime createdTime;
+    private LocalDateTime updatedTime;
     @Column(nullable = false)
     private String topic;
     @Column(name="status_news")

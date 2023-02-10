@@ -1,9 +1,6 @@
 package com.trogiare.service;
 
-import com.google.cloud.storage.Blob;
-import com.google.cloud.storage.BlobId;
-import com.google.cloud.storage.BlobInfo;
-import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.*;
 import com.trogiare.component.ConvertByteToMB;
 import com.trogiare.model.FileSystem;
 import com.trogiare.security.LocalTokenProvider;
@@ -48,5 +45,11 @@ public class GcsService {
         Blob blob = storage.get(blobId);
         byte[] result = blob.getContent();
         return result;
+    }
+    public void deleteFile(String path){
+        Storage storage = StorageOptions.getDefaultInstance().getService();
+        BlobId blobId = BlobId.of(BUCKKET_NAME,path);
+        storage.delete(blobId);
+         logger.info("File " + path + " was deleted from bucket " + BUCKKET_NAME);
     }
 }

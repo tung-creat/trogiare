@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class NewsPayload {
+    private String id;
     @NotBlank(message ="title not blank")
     private String title;
     @NotBlank(message = "metaTitle not blank")
@@ -18,8 +19,7 @@ public class NewsPayload {
     private String content;
     @NotBlank(message = "topic not blank")
     private String topic;
-    @NotNull(message = "favicon not null")
-    private MultipartFile favicon;
-    @NotNull(message = "image Avatar not null")
     private MultipartFile imageAvatar;
+    private String linkImageBeDelete;
+
 }

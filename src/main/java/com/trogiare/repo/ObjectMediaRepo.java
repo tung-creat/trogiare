@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ObjectMediaRepo extends PagingAndSortingRepository<ObjectMedia,String> {
@@ -19,4 +20,8 @@ public interface ObjectMediaRepo extends PagingAndSortingRepository<ObjectMedia,
             " and (:refType is null or ob.refType = :refType)")
     List<PostIddAndPathImages> getImagesByPostIds(@Param("listPostId") List<String> postIds,
                                                   @Param("refType") String refType);
+
+
+    Optional<ObjectMedia> findByObjectId(String objectId);
+    Optional<ObjectMedia> findByMediaId(String mediaId);
 }
