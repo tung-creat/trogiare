@@ -8,4 +8,5 @@ import java.util.Optional;
 @Repository
 public interface  FileSystemRepo extends PagingAndSortingRepository<FileSystem,String> {
     Optional<FileSystem> findByPath(String path);
+    Boolean existsByPath(String path);
 }

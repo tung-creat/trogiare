@@ -77,7 +77,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.js", "/api/v1/socks/**").permitAll()
                 .antMatchers("/login/**",
                         "/api/v1/login/**",
-                        "/api/v1/auth/**",
+                        "/api/v1/auth/",
                         "/logout/**",
                         "/api/v1/reg/**",
                         "/api/v1/file/**",
@@ -87,6 +87,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 ).permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
                 .antMatchers(HttpMethod.GET,"/api/v1/users/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/api/v1/news/**").permitAll()
                 .antMatchers("/swagger-resources/**",
                         "/swagger-ui.html",
                         "/v2/api-docs",

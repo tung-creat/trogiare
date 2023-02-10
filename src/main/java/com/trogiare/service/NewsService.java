@@ -11,12 +11,13 @@ import com.trogiare.model.FileSystem;
 import com.trogiare.model.News;
 import com.trogiare.model.ObjectMedia;
 import com.trogiare.model.UserToken;
-import com.trogiare.model.impl.PostIddAndPathImages;
+import com.trogiare.model.impl.ObjectIddAndPathImages;
 import com.trogiare.payload.news.NewsPayload;
 import com.trogiare.repo.FileSystemRepo;
 import com.trogiare.repo.NewsRepo;
 import com.trogiare.repo.ObjectMediaRepo;
 import com.trogiare.respone.MessageResp;
+import com.trogiare.respone.NewsResp;
 import com.trogiare.utils.HandleStringAndNumber;
 import com.trogiare.utils.UserUtil;
 import com.trogiare.utils.ValidateUtil;
@@ -24,15 +25,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.swing.text.html.Option;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class NewsService {
@@ -140,10 +146,61 @@ public class NewsService {
         newsRepo.delete(news);
         ObjectMedia objectMedia = objectMediaRepo.findByObjectId(newsId).get();
         FileSystem fileSystem = fileSystemRepo.findById(objectMedia.getMediaId()).get();
+        gcsService.deleteFile(fileSystem.getPath());
         objectMediaRepo.delete(objectMedia);
         fileSystemRepo.delete(fileSystem);
         return MessageResp.ok();
     }
+    public MessageResp getNewsById(String newId,HttpServletRequest request){
+        Optional<News> newsOp = newsRepo.findById(newId);
+        if(!newsOp.isPresent()){
+            throw new BadRequestException(ErrorCodesEnum.INVALID_NEWS);
+        }
+        News news = newsOp.get();
+        System.out.println(news.getContent());
+        List<ObjectIddAndPathImages> objectIddAndPathImages = objectMediaRepo.getImagesByObjectIds(
+                List.of(news.getId())
+                ,ObjectMediaRefValueEnum.IMAGE_NEWS.name());
+        StringBuilder  uriAuthority =new StringBuilder(Constants.getAuthority(request));
+        uriAuthority.append("/"+objectIddAndPathImages.get(0).getPath());
+        NewsResp newsResp = new NewsResp(news);
+        newsResp.setContent(news.getContent());
+        newsResp.setImageAvatar(uriAuthority.toString());
+        return MessageResp.ok(newsResp);
+    }
+    public MessageResp getAllNewsByFilter(String keyword, LocalDate timeStart, LocalDate timeEnd, String topic,
+                                          Integer size, Integer page, HttpServletRequest request)
+    {
+        Pageable pageable = PageRequest.of(page,size);
+        String  uriAuthority =Constants.getAuthority(request);
+        Page<News> listNewsPage = newsRepo.getAllNewsByParams(pageable,keyword,timeStart,timeEnd,topic);
+        if(listNewsPage.getTotalElements() == 0){
+            return MessageResp.ok();
+        }
+        List<News> listNews = listNewsPage.getContent();
+        List<String> newsIdList = new ArrayList<>();
+        Map<String,NewsResp> mapNews = new HashMap<>();
+        for(News x : listNews){
+            newsIdList.add(x.getId());
+            NewsResp newsResp = new NewsResp(x);
+            mapNews.put(x.getId(),newsResp);
+        }
 
+        List<ObjectIddAndPathImages> ObjectIddAndPathImagesList =objectMediaRepo.getImagesByObjectIds(newsIdList,ObjectMediaRefValueEnum.IMAGE_NEWS.name());
+        for(ObjectIddAndPathImages x : ObjectIddAndPathImagesList){
+            for(var y : mapNews.entrySet()){
+                if(y.getKey().equals(x.getObjectId())){
+                    StringBuilder uriAuthorityStringBuilder  = new StringBuilder(uriAuthority);
+                    uriAuthorityStringBuilder.append("/"+x.getPath());
+                    y.getValue().setImageAvatar(uriAuthorityStringBuilder.toString());
+                }
+            }
+        }
+        List<NewsResp> newsRespList = new ArrayList<>();
+        for(var x : mapNews.entrySet()){
+            newsRespList.add(x.getValue());
+        }
+        return MessageResp.page(listNewsPage,newsRespList);
+    }
 
 }

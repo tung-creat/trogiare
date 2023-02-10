@@ -27,7 +27,7 @@ public class GcsService {
     @Value("${app.google-cloud-storage.bucket}")
     private String BUCKKET_NAME;
     public FileSystem storeFile(MultipartFile file, String path) throws IOException {
-        path = path+TokenUtil.generateToken(10) + ".png";
+        path = path+TokenUtil.generateToken(10) + ".jpg";
         BlobId blobId = BlobId.of(BUCKKET_NAME,path );
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
         Blob blob = storage.create(blobInfo, file.getBytes());
@@ -47,7 +47,6 @@ public class GcsService {
         return result;
     }
     public void deleteFile(String path){
-        Storage storage = StorageOptions.getDefaultInstance().getService();
         BlobId blobId = BlobId.of(BUCKKET_NAME,path);
         storage.delete(blobId);
          logger.info("File " + path + " was deleted from bucket " + BUCKKET_NAME);

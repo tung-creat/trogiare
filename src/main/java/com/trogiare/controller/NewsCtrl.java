@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/v1/news")
@@ -75,5 +76,30 @@ public class NewsCtrl {
         MessageResp messageResp = newsService.deletedNews(payload.getNewsId());
         return ResponseEntity.ok().body(messageResp);
     }
+    @RequestMapping(path="/get-news-by-id/{newsId}",method =RequestMethod.GET)
+    @ApiOperation(value ="get news by id",response = MessageResp.class)
+    public HttpEntity<?> getNewsById(@PathVariable(value ="newsId") String newsId,HttpServletRequest request){
+        MessageResp messageResp = newsService.getNewsById(newsId,request);
+        return ResponseEntity.ok().body(messageResp);
+    }
+    @RequestMapping(path="/filter",method = RequestMethod.GET)
+    @ApiOperation(value ="get all news and filter",response = MessageResp.class)
+    public HttpEntity<?> getAllNews(@RequestParam(required = false) String keyword,
+                                    @RequestParam(required = false) LocalDate timeStart,
+                                    @RequestParam(required = false) LocalDate timeEnd,
+                                    @RequestParam(required = false) String topic,
+                                    @RequestParam(required = false) Integer size,
+                                    @RequestParam(required = false) Integer page,
+                                    HttpServletRequest request){
+        if(page == null){
+            page =0;
+        }
+        if(size == null){
+            size =  Constants.ITEM_PER_PAGE;
+        }
+        MessageResp messageResp = newsService.getAllNewsByFilter(keyword,timeStart,timeEnd,topic,size,page,request);
+        return  ResponseEntity.ok().body(messageResp);
+    }
+
 
 }

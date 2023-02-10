@@ -10,7 +10,7 @@ import com.trogiare.model.FileSystem;
 import com.trogiare.model.ObjectMedia;
 import com.trogiare.model.Post;
 import com.trogiare.model.impl.PostAndAddress;
-import com.trogiare.model.impl.PostIddAndPathImages;
+import com.trogiare.model.impl.ObjectIddAndPathImages;
 import com.trogiare.payload.PostPayload;
 import com.trogiare.repo.AddressRepo;
 import com.trogiare.repo.FileSystemRepo;
@@ -105,10 +105,10 @@ public class PostService {
             postRespMap.put(postResp.getId(),postResp);
             postIds.add(postResp.getId());
         }
-        List<PostIddAndPathImages> postIdAndImageNameList = objectMediaRepo.getImagesByPostIds(postIds,ObjectMediaRefValueEnum.IMAGE_POST.name());
+        List<ObjectIddAndPathImages> postIdAndImageNameList = objectMediaRepo.getImagesByObjectIds(postIds,ObjectMediaRefValueEnum.IMAGE_POST.name());
         Map<String,String> ImageMap = new HashMap<>();
-        for(PostIddAndPathImages x : postIdAndImageNameList){
-            ImageMap.put(x.getPostId(),x.getPath());
+        for(ObjectIddAndPathImages x : postIdAndImageNameList){
+            ImageMap.put(x.getObjectId(),x.getPath());
             System.out.println(x.getTypeImage());
         }
         for(var x : ImageMap.entrySet()){
@@ -142,9 +142,9 @@ public class PostService {
         PostResp postResp = new PostResp();
         postResp.setPost(postAndAddress.getPost());
         postResp.setAddress(postAndAddress.getAddress());
-        List<PostIddAndPathImages> postIddAndImagesList = objectMediaRepo.getImagesByPostIds(List.of(postId),null);
+        List<ObjectIddAndPathImages> postIddAndImagesList = objectMediaRepo.getImagesByObjectIds(List.of(postId),null);
         List<String> imageDetails = new ArrayList<>();
-        for(PostIddAndPathImages x : postIddAndImagesList){
+        for(ObjectIddAndPathImages x : postIddAndImagesList){
             if(x.getTypeImage().equals(ObjectMediaRefValueEnum.IMAGE_POST.name())){
                 StringBuilder nameImage = new StringBuilder(x.getPath());
                 if(nameImage.toString().startsWith("/images")){

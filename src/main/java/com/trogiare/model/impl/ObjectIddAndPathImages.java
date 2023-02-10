@@ -1,7 +1,7 @@
 package com.trogiare.model.impl;
 
-public interface PostIddAndPathImages {
-    String getPostId();
+public interface ObjectIddAndPathImages {
+    String getObjectId();
     String getTypeImage();
     String getPath();
 }

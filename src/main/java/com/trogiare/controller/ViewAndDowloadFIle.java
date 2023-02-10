@@ -39,7 +39,7 @@ public class ViewAndDowloadFIle {
         String pathImage = request.getServletPath().substring(1);
         byte[] result;
         try{
-             result = gcsService.downloadFile(pathImage);
+                 result =gcsService.downloadFile(pathImage);
         }catch(NullPointerException ex){
             String path = pathImage.substring(pathImage.indexOf("/images"));
             System.out.println(path);
@@ -48,6 +48,6 @@ public class ViewAndDowloadFIle {
             baos.write(url.openStream().readAllBytes());
             result = baos.toByteArray();
         }
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(result);
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(result);
     }
 }
