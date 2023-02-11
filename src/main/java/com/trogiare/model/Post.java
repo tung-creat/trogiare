@@ -1,4 +1,8 @@
 package com.trogiare.model;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.trogiare.common.Constants;
 import com.trogiare.common.enumrate.PostDirectionHouseEnum;
 import com.trogiare.common.enumrate.PostTypeEnum;
@@ -18,6 +22,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = String.class)
 public class Post implements Serializable {
     static final long serialVersionUID = 1L;
     @Id

@@ -1,6 +1,7 @@
 package com.trogiare.respone;
 
 import com.trogiare.common.enumrate.NewsStatusEnum;
+import com.trogiare.dto.NewsDto;
 import com.trogiare.model.News;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,19 @@ public class NewsResp {
     private NewsStatusEnum statusNews;
     String imageAvatar;
     public NewsResp(News news){
+        this.id = news.getId();
+        this.authorId = news.getAuthorId();
+        this.title = news.getTitle();
+        this.metaTitle = news.getMetaTitle();
+        this.shortDescription = news.getShortDescription();
+        this.createdTime = news.getCreatedTime();
+        this.updatedTime = news.getUpdatedTime();
+        this.topic = news.getTopic();
+        this.statusNews = news.getStatusNews();
+        this.content = news.getContent();
+
+    }
+    public NewsResp(NewsDto news){
         this.id = news.getId();
         this.authorId = news.getAuthorId();
         this.title = news.getTitle();

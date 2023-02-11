@@ -1,5 +1,9 @@
 package com.trogiare.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.trogiare.common.enumrate.ObjectMediaRefValueEnum;
 import com.trogiare.common.enumrate.ObjectTypeEnum;
 import javax.persistence.*;
@@ -13,6 +17,9 @@ import org.hibernate.annotations.GenericGenerator;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = String.class)
 public class ObjectMedia {
     @Id
     @GeneratedValue(generator = "objectid-generator")

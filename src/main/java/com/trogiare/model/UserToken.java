@@ -1,5 +1,9 @@
 package com.trogiare.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +18,9 @@ import java.time.LocalDateTime;
 @Table(name="user_token")
 @Getter
 @Setter
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = String.class)
 public class UserToken implements Serializable {
     @Id
     @GeneratedValue(generator = "objectid-generator")

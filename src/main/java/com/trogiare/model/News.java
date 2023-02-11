@@ -1,5 +1,9 @@
 package com.trogiare.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.trogiare.common.enumrate.NewsStatusEnum;
 import javax.persistence.*;
 import lombok.Data;
@@ -9,6 +13,9 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name="news")
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = String.class)
 public class News implements Serializable {
     @Id
     @GeneratedValue(generator = "objectid-generator")

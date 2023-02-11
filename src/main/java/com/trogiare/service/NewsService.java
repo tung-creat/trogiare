@@ -5,12 +5,11 @@ import com.trogiare.common.enumrate.ErrorCodesEnum;
 import com.trogiare.common.enumrate.NewsStatusEnum;
 import com.trogiare.common.enumrate.ObjectMediaRefValueEnum;
 import com.trogiare.common.enumrate.ObjectTypeEnum;
-import com.trogiare.controller.NewsCtrl;
+import com.trogiare.dto.NewsDto;
 import com.trogiare.exception.BadRequestException;
 import com.trogiare.model.FileSystem;
 import com.trogiare.model.News;
 import com.trogiare.model.ObjectMedia;
-import com.trogiare.model.UserToken;
 import com.trogiare.model.impl.ObjectIddAndPathImages;
 import com.trogiare.payload.news.NewsPayload;
 import com.trogiare.repo.FileSystemRepo;
@@ -164,7 +163,6 @@ public class NewsService {
         StringBuilder  uriAuthority =new StringBuilder(Constants.getAuthority(request));
         uriAuthority.append("/"+objectIddAndPathImages.get(0).getPath());
         NewsResp newsResp = new NewsResp(news);
-        newsResp.setContent(news.getContent());
         newsResp.setImageAvatar(uriAuthority.toString());
         return MessageResp.ok(newsResp);
     }
@@ -173,14 +171,14 @@ public class NewsService {
     {
         Pageable pageable = PageRequest.of(page,size);
         String  uriAuthority =Constants.getAuthority(request);
-        Page<News> listNewsPage = newsRepo.getAllNewsByParams(pageable,keyword,timeStart,timeEnd,topic);
+        Page<NewsDto> listNewsPage = newsRepo.getAllNewsByParams(pageable,keyword,timeStart,timeEnd,topic);
         if(listNewsPage.getTotalElements() == 0){
             return MessageResp.ok();
         }
-        List<News> listNews = listNewsPage.getContent();
+        List<NewsDto> listNews = listNewsPage.getContent();
         List<String> newsIdList = new ArrayList<>();
         Map<String,NewsResp> mapNews = new HashMap<>();
-        for(News x : listNews){
+        for(NewsDto x : listNews){
             newsIdList.add(x.getId());
             NewsResp newsResp = new NewsResp(x);
             mapNews.put(x.getId(),newsResp);
