@@ -111,7 +111,7 @@ public class PostService {
             ImageMap.put(x.getObjectId(),x.getPath());
             System.out.println(x.getTypeImage());
         }
-        for(var x : ImageMap.entrySet()){
+        for(Map.Entry<String, String> x : ImageMap.entrySet()){
             StringBuilder nameImage = new StringBuilder(x.getValue());
             if(nameImage.toString().startsWith("/images")){
                 nameImage.insert(0,URI_AUTHORITY+"/trogiare");
@@ -121,8 +121,8 @@ public class PostService {
 
             ImageMap.put(x.getKey(),nameImage.toString());
         }
-        for(var x : postRespMap.entrySet()){
-            for(var y : ImageMap.entrySet()){
+        for(Map.Entry<String,PostResp> x : postRespMap.entrySet()){
+            for( Map.Entry<String,String> y : ImageMap.entrySet()){
                 if(x.getKey().equals(y.getKey())){
                    x.getValue().setImage(y.getValue());
                 }
@@ -142,7 +142,7 @@ public class PostService {
         PostResp postResp = new PostResp();
         postResp.setPost(postAndAddress.getPost());
         postResp.setAddress(postAndAddress.getAddress());
-        List<ObjectIddAndPathImages> postIddAndImagesList = objectMediaRepo.getImagesByObjectIds(List.of(postId),null);
+        List<ObjectIddAndPathImages> postIddAndImagesList = objectMediaRepo.getImagesByObjectIds(Arrays.asList(postId),null);
         List<String> imageDetails = new ArrayList<>();
         for(ObjectIddAndPathImages x : postIddAndImagesList){
             if(x.getTypeImage().equals(ObjectMediaRefValueEnum.IMAGE_POST.name())){

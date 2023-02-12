@@ -158,7 +158,7 @@ public class NewsService {
         News news = newsOp.get();
         System.out.println(news.getContent());
         List<ObjectIddAndPathImages> objectIddAndPathImages = objectMediaRepo.getImagesByObjectIds(
-                List.of(news.getId())
+                Arrays.asList(news.getId())
                 ,ObjectMediaRefValueEnum.IMAGE_NEWS.name());
         StringBuilder  uriAuthority =new StringBuilder(Constants.getAuthority(request));
         uriAuthority.append("/"+objectIddAndPathImages.get(0).getPath());
@@ -186,7 +186,7 @@ public class NewsService {
 
         List<ObjectIddAndPathImages> ObjectIddAndPathImagesList =objectMediaRepo.getImagesByObjectIds(newsIdList,ObjectMediaRefValueEnum.IMAGE_NEWS.name());
         for(ObjectIddAndPathImages x : ObjectIddAndPathImagesList){
-            for(var y : mapNews.entrySet()){
+            for(Map.Entry<String,NewsResp> y : mapNews.entrySet()){
                 if(y.getKey().equals(x.getObjectId())){
                     StringBuilder uriAuthorityStringBuilder  = new StringBuilder(uriAuthority);
                     uriAuthorityStringBuilder.append("/"+x.getPath());
@@ -195,7 +195,7 @@ public class NewsService {
             }
         }
         List<NewsResp> newsRespList = new ArrayList<>();
-        for(var x : mapNews.entrySet()){
+        for(Map.Entry<String,NewsResp> x : mapNews.entrySet()){
             newsRespList.add(x.getValue());
         }
         return MessageResp.page(listNewsPage,newsRespList);

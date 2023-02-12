@@ -44,8 +44,17 @@ public class ViewAndDowloadFIle {
             String path = pathImage.substring(pathImage.indexOf("/images"));
             System.out.println(path);
             URL url = new URL("https://cloud.mogi.vn"+path);
+            InputStream inputStream = url.openStream();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            baos.write(url.openStream().readAllBytes());
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                baos.write(buffer, 0, bytesRead);
+            }
+
+            inputStream.close();
+            baos.close();
+
             result = baos.toByteArray();
         }
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(result);
