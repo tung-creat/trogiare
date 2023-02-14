@@ -158,7 +158,7 @@ public class NewsService {
         News news = newsOp.get();
         System.out.println(news.getContent());
         List<ObjectIddAndPathImages> objectIddAndPathImages = objectMediaRepo.getImagesByObjectIds(
-                Arrays.asList(news.getId())
+                List.of(news.getId())
                 ,ObjectMediaRefValueEnum.IMAGE_NEWS.name());
         StringBuilder  uriAuthority =new StringBuilder(Constants.getAuthority(request));
         uriAuthority.append("/"+objectIddAndPathImages.get(0).getPath());

@@ -87,7 +87,7 @@ public class EmailService {
         }
        EmailTemplate emailResult = emailTemplate;
         String emailContent = emailResult.getContent();
-        for (Map.Entry<String, String> x : information.entrySet()) {
+        for (Map.Entry<String,String> x : information.entrySet()) {
             emailContent = emailContent.replace("${" + x.getKey() + "}", x.getValue());
         }
 

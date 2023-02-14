@@ -185,7 +185,4 @@ public class WebCrawlerThread implements Runnable {
         }
 
     }
-    public static void main(String[] args) {
-
-    }
 }

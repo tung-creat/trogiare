@@ -142,7 +142,7 @@ public class PostService {
         PostResp postResp = new PostResp();
         postResp.setPost(postAndAddress.getPost());
         postResp.setAddress(postAndAddress.getAddress());
-        List<ObjectIddAndPathImages> postIddAndImagesList = objectMediaRepo.getImagesByObjectIds(Arrays.asList(postId),null);
+        List<ObjectIddAndPathImages> postIddAndImagesList = objectMediaRepo.getImagesByObjectIds(List.of(postId),null);
         List<String> imageDetails = new ArrayList<>();
         for(ObjectIddAndPathImages x : postIddAndImagesList){
             if(x.getTypeImage().equals(ObjectMediaRefValueEnum.IMAGE_POST.name())){
