@@ -3,47 +3,34 @@ package com.trogiare.service;
 import com.trogiare.common.Constants;
 import com.trogiare.common.enumrate.*;
 import com.trogiare.component.PostCodeComponent;
-import com.trogiare.controller.SaveFileCtrl;
 import com.trogiare.exception.BadRequestException;
-import com.trogiare.model.Address;
-import com.trogiare.model.FileSystem;
-import com.trogiare.model.ObjectMedia;
-import com.trogiare.model.Post;
+import com.trogiare.model.*;
 import com.trogiare.model.impl.PostAndAddress;
 import com.trogiare.model.impl.ObjectIddAndPathImages;
 import com.trogiare.payload.PostPayload;
-import com.trogiare.repo.AddressRepo;
-import com.trogiare.repo.FileSystemRepo;
-import com.trogiare.repo.ObjectMediaRepo;
-import com.trogiare.repo.PostRepo;
+import com.trogiare.repo.*;
 import com.trogiare.respone.MessageResp;
 import com.trogiare.respone.PostResp;
+import com.trogiare.respone.UserResp;
 import com.trogiare.utils.HandleStringAndNumber;
-import com.trogiare.utils.TokenUtil;
 import com.trogiare.utils.UserUtil;
-import com.trogiare.utils.ValidateUtil;
-import org.apache.el.parser.Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -64,6 +51,8 @@ public class PostService {
     private AddressRepo addressRepo;
     @Autowired
     private PostCodeComponent postCodeComponent;
+    @Autowired
+    private UserRepo userRepo;
 
 
     @Transactional
@@ -143,24 +132,24 @@ public class PostService {
         postResp.setPost(postAndAddress.getPost());
         postResp.setAddress(postAndAddress.getAddress());
         List<ObjectIddAndPathImages> postIddAndImagesList = objectMediaRepo.getImagesByObjectIds(List.of(postId),null);
+        Optional<User> userOp = userRepo.findById(postResp.getOwnerId());
+        if(!userOp.isPresent()){
+            throw new BadRequestException("not found user");
+        }
+        User user = userOp.get();
+        UserResp userResp = new UserResp();
+        userResp.setUser(user);
+        List<ObjectIddAndPathImages> userIdAndPathImage= objectMediaRepo.getImagesByObjectIds(List.of(user.getId()),ObjectMediaRefValueEnum.AVATAR.name());
+        if(userIdAndPathImage != null && userIdAndPathImage.size() >=1){
+            userResp.setAvatar(handelConvertLinkImage(URI_AUTHORITY,userIdAndPathImage.get(0)));
+        }
+        postResp.setUser(userResp);
         List<String> imageDetails = new ArrayList<>();
         for(ObjectIddAndPathImages x : postIddAndImagesList){
             if(x.getTypeImage().equals(ObjectMediaRefValueEnum.IMAGE_POST.name())){
-                StringBuilder nameImage = new StringBuilder(x.getPath());
-                if(nameImage.toString().startsWith("/images")){
-                    nameImage.insert(0,URI_AUTHORITY+"/trogiare");
-                }else{
-                    nameImage.insert(0,URI_AUTHORITY+"/");
-                }
-                postResp.setImage(nameImage.toString());
+                postResp.setImage(handelConvertLinkImage(URI_AUTHORITY,x));
             }else{
-                StringBuilder nameImage = new StringBuilder(x.getPath());
-                if(nameImage.toString().startsWith("/images")){
-                    nameImage.insert(0,URI_AUTHORITY+"/trogiare");
-                }else{
-                    nameImage.insert(0,URI_AUTHORITY+"/");
-                }
-                imageDetails.add(nameImage.toString());
+                imageDetails.add(handelConvertLinkImage(URI_AUTHORITY,x));
             }
         }
         postResp.setImageDetails(imageDetails);
@@ -214,6 +203,15 @@ public class PostService {
         }
         fileSystemRepo.saveAll(fileSystems);
         objectMediaRepo.saveAll(listObjectMedia);
+    }
+    private String handelConvertLinkImage(String URI_AUTHORITY,ObjectIddAndPathImages x){
+        StringBuilder nameImage = new StringBuilder(x.getPath());
+        if(nameImage.toString().startsWith("/images")){
+            nameImage.insert(0,URI_AUTHORITY+"/trogiare");
+        }else{
+            nameImage.insert(0,URI_AUTHORITY+"/");
+        }
+        return nameImage.toString();
     }
 
 }

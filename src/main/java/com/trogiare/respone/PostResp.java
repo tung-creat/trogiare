@@ -6,6 +6,7 @@ import com.trogiare.common.enumrate.PostDirectionHouseEnum;
 import com.trogiare.common.enumrate.PostTypeEnum;
 import com.trogiare.model.Address;
 import com.trogiare.model.Post;
+import com.trogiare.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,6 +49,7 @@ public class PostResp {
     private Address address;
     private String image;
     private List<String> imageDetails;
+    private UserResp user;
 
     public void setPost(Post post) {
         this.id = post.getId();

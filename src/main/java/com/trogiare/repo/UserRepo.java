@@ -20,4 +20,5 @@ public interface UserRepo extends PagingAndSortingRepository<User,String> {
                                  @Param("sdt") String sdt,
                                  @Param("email") String email);
 
+
 }
