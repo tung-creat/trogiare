@@ -77,7 +77,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.js", "/api/v1/socks/**").permitAll()
                 .antMatchers("/login/**",
                         "/api/v1/login/**",
-                        "/api/v1/auth/",
+                        "/api/v1/auth/**",
                         "/logout/**",
                         "/api/v1/reg/**",
                         "/api/v1/file/**",

@@ -42,7 +42,7 @@ public class NewsCtrl {
     private String PATH_IMAGE_BLOGS;
 
     @Transactional
-    @RequestMapping(path = "/upload-image-blog", method = RequestMethod.POST)
+    @RequestMapping(path = "/upload-image-news", method = RequestMethod.POST)
     @ApiOperation(value = "upload image blog then get url image", response = MessageResp.class)
     public HttpEntity<?> uploadImage(@RequestParam("file") MultipartFile file, @RequestParam("nameBlog") String nameBlog, HttpServletRequest request) throws IOException {
         if (!(file.getContentType().equals(MediaType.IMAGE_PNG_VALUE) ||
