@@ -2,6 +2,7 @@ package com.trogiare.controller;
 
 import com.trogiare.common.Constants;
 import com.trogiare.common.enumrate.ErrorCodesEnum;
+import com.trogiare.component.CompressFileComponent;
 import com.trogiare.component.ListRoleUserComponent;
 import com.trogiare.exception.BadRequestException;
 import com.trogiare.model.FileSystem;
@@ -61,6 +62,8 @@ public class UserCtrl {
     private ListRoleUserComponent userRoles;
     @Autowired
     private UserRoleRepo userRoleRepo;
+    @Autowired
+    private CompressFileComponent compressFileComponent;
 
     @RequestMapping(path = "", method = RequestMethod.GET)
     @ApiOperation(value = "get ALl user", response = MessageResp.class)
@@ -142,7 +145,7 @@ public class UserCtrl {
         FileSystem fileSystem = new FileSystem();
         if (payload.getAvatar() != null) {
             String path = new StringBuilder(PATH_IMAGE_AVATAR).append("/" + TokenUtil.generateToken(20)).toString();
-            fileSystem = gcsService.storeFile(payload.getAvatar(), path);
+            fileSystem = gcsService.storeImage(compressFileComponent.compressImage(payload.getAvatar()), path);
         }
         user = userOp.get();
         user.setSdt(payload.getSdt());

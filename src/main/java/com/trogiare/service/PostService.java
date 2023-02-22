@@ -2,6 +2,7 @@ package com.trogiare.service;
 
 import com.trogiare.common.Constants;
 import com.trogiare.common.enumrate.*;
+import com.trogiare.component.CompressFileComponent;
 import com.trogiare.component.PostCodeComponent;
 import com.trogiare.exception.BadRequestException;
 import com.trogiare.model.*;
@@ -51,6 +52,8 @@ public class PostService {
     private AddressRepo addressRepo;
     @Autowired
     private PostCodeComponent postCodeComponent;
+    @Autowired
+    private CompressFileComponent compressFileComponent;
     @Autowired
     private UserRepo userRepo;
 
@@ -179,7 +182,7 @@ public class PostService {
         List<FileSystem> fileSystems = new ArrayList<>();
         List<ObjectMedia> listObjectMedia = new ArrayList<>();
         String path = new StringBuilder(PATH_IMAGE_FILE_POST).append("/" +HandleStringAndNumber.removeAccent(payload.getName())).toString();
-        FileSystem fileSystem = gcsService.storeFile(payload.getImage(),path);
+        FileSystem fileSystem = gcsService.storeImage(compressFileComponent.compressImage(payload.getImage()),path);
         ObjectMedia objectMedia = new ObjectMedia();
         objectMedia.setMediaId(fileSystem.getId());
         objectMedia.setObjectId(post.getId());
@@ -191,7 +194,7 @@ public class PostService {
         if (payload.getImagesDetails() != null && payload.getImagesDetails().size() >0) {
             for (MultipartFile multipartFile : payload.getImagesDetails()) {
                 path = new StringBuilder(PATH_IMAGE_FILE_POST).append("/" +HandleStringAndNumber.removeAccent(payload.getName())).toString();
-                fileSystem = gcsService.storeFile(multipartFile,path);
+                fileSystem = gcsService.storeImage(compressFileComponent.compressImage(multipartFile),path);
                 fileSystems.add(fileSystem);
                 objectMedia = new ObjectMedia();
                 objectMedia.setMediaId(fileSystem.getId());

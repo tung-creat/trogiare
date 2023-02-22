@@ -2,6 +2,7 @@ package com.trogiare.controller;
 
 import com.trogiare.common.Constants;
 import com.trogiare.common.enumrate.ErrorCodesEnum;
+import com.trogiare.component.CompressFileComponent;
 import com.trogiare.exception.BadRequestException;
 import com.trogiare.model.FileSystem;
 import com.trogiare.payload.news.DeleteFormNewsPayload;
@@ -12,6 +13,7 @@ import com.trogiare.security.UserPrincipal;
 import com.trogiare.service.GcsService;
 import com.trogiare.service.NewsService;
 import com.trogiare.utils.HandleStringAndNumber;
+import com.trogiare.utils.TokenUtil;
 import com.trogiare.utils.UserUtil;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -40,18 +42,20 @@ public class NewsCtrl {
     private NewsService newsService;
     @Value("${app.path.save.image-blogs}")
     private String PATH_IMAGE_BLOGS;
+    @Autowired
+    private CompressFileComponent compressFileComponent;
 
     @Transactional
     @RequestMapping(path = "/upload-image-news", method = RequestMethod.POST)
     @ApiOperation(value = "upload image blog then get url image", response = MessageResp.class)
-    public HttpEntity<?> uploadImage(@RequestParam("file") MultipartFile file, @RequestParam("nameBlog") String nameBlog, HttpServletRequest request) throws IOException {
+    public HttpEntity<?> uploadImage(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws IOException {
         if (!(file.getContentType().equals(MediaType.IMAGE_PNG_VALUE) ||
                 file.getContentType().equals(MediaType.IMAGE_JPEG_VALUE))) {
             throw new BadRequestException(ErrorCodesEnum.INVALID_FILE);
         }
         StringBuilder x = new StringBuilder(Constants.getAuthority(request));
-        String pathFile = PATH_IMAGE_BLOGS +"/"+  HandleStringAndNumber.removeAccent(nameBlog);
-        FileSystem fileSystem = gcsService.storeFile(file,pathFile);
+        String pathFile = PATH_IMAGE_BLOGS +"/"+ TokenUtil.generateToken(60);
+        FileSystem fileSystem = gcsService.storeImage(compressFileComponent.compressImage(file),pathFile);
         x.append("/");
         x.append(fileSystem.getPath());
         return ResponseEntity.ok().body(x.toString());

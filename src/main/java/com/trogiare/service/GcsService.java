@@ -24,17 +24,18 @@ public class GcsService {
     private ConvertByteToMB convertByteToMB;
     @Value("${app.google-cloud-storage.bucket}")
     private String BUCKKET_NAME;
-    public FileSystem storeFile(MultipartFile file, String path) throws IOException {
-        path = path+TokenUtil.generateToken(10) + ".jpg";
+
+    public FileSystem storeImage(byte [] file, String path) throws IOException {
+        path = path+TokenUtil.generateToken(10) + ".jpeg";
         BlobId blobId = BlobId.of(BUCKKET_NAME,path );
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
-        Blob blob = storage.create(blobInfo, file.getBytes());
+        Blob blob = storage.create(blobInfo,file);
         FileSystem fileSystem = new FileSystem();
         fileSystem.setId(IdUtil.generate());
-        fileSystem.setSize(String.valueOf(convertByteToMB.getSize(file.getSize())));
+        fileSystem.setSize(String.valueOf(convertByteToMB.getSize(file.length)));
         fileSystem.setPath(path);
         fileSystem.setCreatedTime(LocalDateTime.now());
-        fileSystem.setType(file.getContentType());
+        fileSystem.setType("img/jpeg");
         return fileSystem;
     }
 

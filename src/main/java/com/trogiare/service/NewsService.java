@@ -5,6 +5,7 @@ import com.trogiare.common.enumrate.ErrorCodesEnum;
 import com.trogiare.common.enumrate.NewsStatusEnum;
 import com.trogiare.common.enumrate.ObjectMediaRefValueEnum;
 import com.trogiare.common.enumrate.ObjectTypeEnum;
+import com.trogiare.component.CompressFileComponent;
 import com.trogiare.dto.NewsDto;
 import com.trogiare.exception.BadRequestException;
 import com.trogiare.model.FileSystem;
@@ -52,6 +53,9 @@ public class NewsService {
     private FileSystemRepo fileSystemRepo;
     @Autowired
     private GcsService gcsService;
+    @Autowired
+    private CompressFileComponent compressFileComponent;
+
 
     @Transactional
     public MessageResp addNews(NewsPayload payload) throws IOException {
@@ -71,7 +75,7 @@ public class NewsService {
         news.setUpdatedTime(LocalDateTime.now());
         news.setShortDescription(payload.getShortDescription());
         news = newsRepo.save(news);
-        FileSystem fileSystemImage = gcsService.storeFile(payload.getImageAvatar(), path);
+        FileSystem fileSystemImage = gcsService.storeImage(compressFileComponent.compressImage(payload.getImageAvatar()), path);
         ObjectMedia objectMediaImage = new ObjectMedia();
         objectMediaImage.setObjectId(news.getId());
         objectMediaImage.setMediaId(fileSystemImage.getId());
@@ -116,7 +120,7 @@ public class NewsService {
         }
         if (payload.getImageAvatar() != null) {
             String path = PATH_IMAGE_BLOGS + "/" + HandleStringAndNumber.removeAccent(payload.getTitle());
-            FileSystem fileSystemImage = gcsService.storeFile(payload.getImageAvatar(), path);
+            FileSystem fileSystemImage = gcsService.storeImage(compressFileComponent.compressImage(payload.getImageAvatar()), path);
             ObjectMedia objectMediaImage = new ObjectMedia();
             objectMediaImage.setObjectId(news.getId());
             objectMediaImage.setMediaId(fileSystemImage.getId());
