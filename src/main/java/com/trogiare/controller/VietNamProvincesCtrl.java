@@ -26,10 +26,10 @@ public class VietNamProvincesCtrl {
     private DistrictsRepo districtsRepo;
     @Autowired
     private WardsRepo wardsRepo;
-    @RequestMapping(path = "/",method = RequestMethod.GET)
+    @RequestMapping(path = "",method = RequestMethod.GET)
     @ApiOperation(value = "get all provinces in VietNam", response = MessageResp.class)
     public HttpEntity<?> getProvinces(){
-        List<Provinces> provincesList = (List<Provinces>) provincesRepo.findAll();
+        Iterable<Provinces> provincesList = provincesRepo.findAll();
         return ResponseEntity.ok().body(MessageResp.ok(provincesList));
     }
     @RequestMapping(path="/get-districts-by-provice-id/{idProvince}",method = RequestMethod.GET)
