@@ -3,9 +3,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.trogiare.common.Constants;
-import com.trogiare.common.enumrate.PostDirectionHouseEnum;
-import com.trogiare.common.enumrate.PostTypeEnum;
+import com.trogiare.common.enumrate.*;
 import com.trogiare.payload.PostPayload;
 import com.trogiare.utils.HandleStringAndNumber;
 import javax.persistence.*;
@@ -32,11 +30,11 @@ public class Post implements Serializable {
     @GenericGenerator(name = "objectid-generator", strategy = "com.trogiare.common.ObjectIDGenerator")
     @Column(unique = true, nullable = false, length = 24)
     private String id;
+    @Column(nullable = false)
     private String name;
     @Column(name="address_id")
     private String addressId;
-    @Column(name ="price_unit")
-    private String priceUnit;
+    @Column(name ="time_unit_use")
     private Long price;
     @Column(name="compact_number")
     private String compactNumber;
@@ -44,7 +42,9 @@ public class Post implements Serializable {
     private Double useableArea;
     @Column(name="land_area")
     private Double landArea;
-
+    @Column(name="type_real_estate",nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PostTypeReftValueEnum typeRealEstate;
     private Integer bedroom;
     @Lob
     @Column(name="description",columnDefinition = "TEXT")
@@ -55,7 +55,7 @@ public class Post implements Serializable {
     private String juridical;
     private Double gateway;
     private Integer numberFloor;
-    private String status;
+    private PostStatusEnum status;
     private Integer toilet;
     private String furniture;
     @Column(name="created_time",nullable = false)
@@ -88,7 +88,6 @@ public class Post implements Serializable {
         this.setNumberFloor(payload.getNumberFloor());
         this.setToilet(payload.getToilet());
         this.setPrice(payload.getPrice());
-        this.setPriceUnit(payload.getPriceUnit());
         if(payload.getPrice() != null){
             this.setCompactNumber(HandleStringAndNumber.compactNumber(payload.getPrice()));
         }

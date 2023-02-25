@@ -115,7 +115,7 @@ public class WebCrawlerThread implements Runnable {
         Post post = new Post();
         post.setUseableArea(useAble);
         post.setPostCode(postCodeComponent.getCode());
-        post.setStatus(PostStatusEnum.PUBLIC.name());
+        post.setStatus(PostStatusEnum.PUBLIC);
         post.setExpirationDate(LocalDateTime.now().plusDays(10));
         post.setUpdatedTime(LocalDateTime.now());
         post.setCreatedTime(LocalDateTime.now());

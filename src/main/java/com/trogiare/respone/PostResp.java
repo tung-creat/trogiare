@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.trogiare.common.enumrate.PostDirectionHouseEnum;
 import com.trogiare.common.enumrate.PostTypeEnum;
+import com.trogiare.common.enumrate.TimeUnitUseEnum;
 import com.trogiare.model.Address;
 import com.trogiare.model.Post;
 import com.trogiare.model.User;
@@ -24,7 +25,6 @@ import java.util.List;
 public class PostResp {
     private String id;
     private String name;
-    private String priceUnit;
     private Long price;
     private String compactNumber;
     private Integer bedroom;
@@ -54,7 +54,6 @@ public class PostResp {
     public void setPost(Post post) {
         this.id = post.getId();
         this.name = post.getName();
-        this.priceUnit = post.getPriceUnit();
         this.price = post.getPrice();
         this.compactNumber = post.getCompactNumber();
         this.bedroom = post.getBedroom();

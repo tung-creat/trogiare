@@ -18,7 +18,7 @@ public interface PostRepo extends PagingAndSortingRepository<Post, String> {
     @Query(value =
             "SELECT p as post,ad as address " +
                     "FROM Post p LEFT JOIN Address ad ON ad.id = p.addressId " +
-                    "where p.status like 'PUBLIC'" +
+                    "where p.status = 'PUBLIC'" +
                     "and (:address is null or ad.addressDetails like concat('%',:address,'%')) " +
                     "and (:priceMin is null or :priceMin <= p.price)" +
                     "and (:priceMax is null or :priceMax >= p.price)" +

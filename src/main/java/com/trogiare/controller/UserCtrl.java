@@ -5,6 +5,7 @@ import com.trogiare.common.enumrate.ErrorCodesEnum;
 import com.trogiare.component.CompressFileComponent;
 import com.trogiare.component.ListRoleUserComponent;
 import com.trogiare.exception.BadRequestException;
+import com.trogiare.exception.InputInvalidException;
 import com.trogiare.model.FileSystem;
 import com.trogiare.model.ObjectMedia;
 import com.trogiare.model.User;
@@ -160,25 +161,27 @@ public class UserCtrl {
     }
 
     @RequestMapping(path = "/change-password", method = RequestMethod.PUT)
-    @ApiOperation(value = "change password user", response = MessageResp.class)
+    @ApiOperation(value = "User do change their password", response = MessageResp.class)
     public HttpEntity<Object> changePassword(@Valid @RequestBody ChangePassword payload) {
-        String uid = UserUtil.getUserId();
-        Optional<User> userOpt = userRepo.findById(uid);
+        if(payload.getPassword().equals(payload.getNewPassword())){
+            throw new InputInvalidException("passsword can't equals new Password");
+        }
+        if(!payload.getNewPassword().equals(payload.getReTypePassword())){
+            throw new InputInvalidException("passsword not equals repassword");
+        }
+        String userId = UserUtil.getUserId();
+        Optional<User> userOpt = userRepo.findById(userId);
         if (!userOpt.isPresent()) {
             logger.info("NOT valid user ID");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(MessageResp.error(ErrorCodesEnum.INVALID_UID));
-        }
-        if (!payload.getRePassword().equals(payload.getRePassword())) {
-            logger.info("Password and repassword not equal");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(MessageResp.error(ErrorCodesEnum.REPASSWORD_NOT_EQUALS_PASSWORD));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(MessageResp.error(ErrorCodesEnum.INVALID_USER_ID));
         }
         User user = userOpt.get();
         boolean isValidPassword = passwordEncoder.matches(payload.getPassword(), user.getPassword());
         if (!isValidPassword) {
             logger.info("NOT valid password");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(MessageResp.error(ErrorCodesEnum.PASSWORD_HAS_BEEN_USED_BEFORE));
+            throw new InputInvalidException("password can't not equals password before");
         }
-        user.setPassword(passwordEncoder.encode(payload.getPassword()));
+        user.setPassword(passwordEncoder.encode(payload.getNewPassword()));
         userRepo.save(user);
         return ResponseEntity.ok(MessageResp.ok());
     }

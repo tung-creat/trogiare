@@ -4,6 +4,7 @@ import lombok.ToString;
 
 
 public enum ErrorCodesEnum {
+    INVALID_USER_ID("INVALID USER ID"),
     INTERNAL_SERVER_ERROR("INTERNAL_SERVER_ERROR"),
     REPASSWORD_NOT_EQUALS_PASSWORD("Repassword not equals passsword"),
     EMAIL_EXIST("Email exist"),

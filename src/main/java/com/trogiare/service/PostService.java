@@ -68,7 +68,7 @@ public class PostService {
         address =addressRepo.save(address);
         Post post = new Post();
         post.setInformationFromPayLoad(payload);
-        post.setStatus(PostStatusEnum.PUBLIC.name());
+        post.setStatus(PostStatusEnum.PUBLIC);
         post.setCreatedTime(LocalDateTime.now());
         post.setUpdatedTime(LocalDateTime.now());
         post.setExpirationDate(LocalDateTime.now().plusDays(10));
@@ -172,7 +172,7 @@ public class PostService {
        if(post.getStatus().equals(PostStatusEnum.DELETED.name())){
            throw new BadRequestException(ErrorCodesEnum.NOT_FOUND_POST);
        }
-       post.setStatus(PostStatusEnum.DELETED.name());
+       post.setStatus(PostStatusEnum.DELETED);
        postRepo.save(post);
        return MessageResp.ok();
     }
