@@ -2,12 +2,14 @@ package com.trogiare.payload;
 
 import com.trogiare.common.enumrate.PostDirectionHouseEnum;
 import com.trogiare.common.enumrate.PostTypeEnum;
+import com.trogiare.common.enumrate.PostTypeReftValueEnum;
 import com.trogiare.common.enumrate.TimeUnitUseEnum;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,6 +31,8 @@ public class PostPayload {
     private Double useableArea;
     private Double landArea;
     private Long price;
+    @NotNull(message = "type real_estate is not blank")
+    private PostTypeReftValueEnum typeRealEstate;
     @NotBlank(message = "area is not blank")
     private Double area;
     private Integer bedroom;
@@ -40,6 +44,7 @@ public class PostPayload {
     private Integer numberFloor;
     private Integer toilet;
     private String furniture;
+    @NotBlank(message = "type post can't blank")
     private PostTypeEnum typePost;
     private MultipartFile image;
     @Size(max=5 , message = "images details allow max 5 file")

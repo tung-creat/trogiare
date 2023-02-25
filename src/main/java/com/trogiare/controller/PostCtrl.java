@@ -7,6 +7,8 @@ import com.trogiare.respone.MessageResp;
 import com.trogiare.service.PostService;
 import com.trogiare.utils.UserUtil;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +21,14 @@ import java.net.URISyntaxException;
 @RestController
 @RequestMapping("/api/v1/posts")
 public class PostCtrl {
+    private static final Logger logger = LoggerFactory.getLogger(PostCtrl.class);
     @Autowired
     private PostService postService;
+
     @RequestMapping(path="",method = RequestMethod.POST)
     @ApiOperation(value = "save post", response = MessageResp.class)
     public HttpEntity<?> savePost(@ModelAttribute PostPayload payload) throws IOException {
+        logger.info("type bat dong san " +payload.getTypeRealEstate().name());
         String uid = UserUtil.getUserId();
         MessageResp messageResp = postService.savePost(payload,uid);
         return ResponseEntity.ok().body(messageResp);

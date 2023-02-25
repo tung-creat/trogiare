@@ -88,6 +88,7 @@ public class Post implements Serializable {
         this.setNumberFloor(payload.getNumberFloor());
         this.setToilet(payload.getToilet());
         this.setPrice(payload.getPrice());
+        this.setTypeRealEstate(payload.getTypeRealEstate());
         if(payload.getPrice() != null){
             this.setCompactNumber(HandleStringAndNumber.compactNumber(payload.getPrice()));
         }

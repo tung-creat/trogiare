@@ -160,21 +160,22 @@ public class PostService {
 
     }
     public MessageResp deletePostById(String postId){
-        String userId = UserUtil.getUserId();
-       Optional<Post> postOP=  postRepo.findById(postId);
-       if(!postOP.isPresent()){
-           throw new BadRequestException(ErrorCodesEnum.NOT_FOUND_POST);
-       }
-       Post post = postOP.get();
-       if(!post.getOwnerId().equals(userId)){
-           throw new BadRequestException(ErrorCodesEnum.ACCESS_DENIED);
-       }
-       if(post.getStatus().equals(PostStatusEnum.DELETED.name())){
-           throw new BadRequestException(ErrorCodesEnum.NOT_FOUND_POST);
-       }
-       post.setStatus(PostStatusEnum.DELETED);
-       postRepo.save(post);
-       return MessageResp.ok();
+//        String userId = UserUtil.getUserId();
+//       Optional<Post> postOP=  postRepo.findById(postId);
+//       if(!postOP.isPresent()){
+//           throw new BadRequestException(ErrorCodesEnum.NOT_FOUND_POST);
+//       }
+//       Post post = postOP.get();
+//       if(!post.getOwnerId().equals(userId)){
+//           throw new BadRequestException(ErrorCodesEnum.ACCESS_DENIED);
+//       }
+//       if(post.getStatus().equals(PostStatusEnum.DELETED.name())){
+//           throw new BadRequestException(ErrorCodesEnum.NOT_FOUND_POST);
+//       }
+//       post.setStatus(PostStatusEnum.DELETED);
+//       postRepo.save(post);
+//       return MessageResp.ok();
+        return null;
     }
 
 
