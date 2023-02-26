@@ -159,23 +159,27 @@ public class PostService {
         return MessageResp.ok(postResp);
 
     }
-    public MessageResp deletePostById(String postId){
-//        String userId = UserUtil.getUserId();
-//       Optional<Post> postOP=  postRepo.findById(postId);
-//       if(!postOP.isPresent()){
-//           throw new BadRequestException(ErrorCodesEnum.NOT_FOUND_POST);
-//       }
-//       Post post = postOP.get();
-//       if(!post.getOwnerId().equals(userId)){
-//           throw new BadRequestException(ErrorCodesEnum.ACCESS_DENIED);
-//       }
-//       if(post.getStatus().equals(PostStatusEnum.DELETED.name())){
-//           throw new BadRequestException(ErrorCodesEnum.NOT_FOUND_POST);
-//       }
-//       post.setStatus(PostStatusEnum.DELETED);
-//       postRepo.save(post);
-//       return MessageResp.ok();
-        return null;
+    public MessageResp deletePostByIds(List<String> postIds){
+        String userId = UserUtil.getUserId();
+        List<String> userIdsOfListProduct = postRepo.checkUserIdByListPostId(postIds);
+        if(userIdsOfListProduct.size() >1){
+            throw new BadRequestException(ErrorCodesEnum.ACCESS_DENIED);
+        }
+        if(!userIdsOfListProduct.get(0).equals(userId)){
+            throw new BadRequestException(ErrorCodesEnum.ACCESS_DENIED);
+        }
+        postRepo.deletePostByListId(postIds);
+        List<String> pathList = objectMediaRepo.getPathImageFromObjectid(postIds);
+        for(String path :pathList){
+            try{
+                gcsService.deleteFile(path);
+            }catch(Exception ex){
+                continue;
+            }
+        }
+        objectMediaRepo.deleteObjectMediaAndMediaByObjectIds(postIds);
+        return MessageResp.ok();
+
     }
 
 
@@ -183,7 +187,7 @@ public class PostService {
         List<FileSystem> fileSystems = new ArrayList<>();
         List<ObjectMedia> listObjectMedia = new ArrayList<>();
         String path = new StringBuilder(PATH_IMAGE_FILE_POST).append("/" +HandleStringAndNumber.removeAccent(payload.getName())).toString();
-        FileSystem fileSystem = gcsService.storeImage(compressFileComponent.compressImage(payload.getImage()),path);
+        FileSystem fileSystem = gcsService.storeImage(compressFileComponent.compressImage(payload.getImage(),2f),path);
         ObjectMedia objectMedia = new ObjectMedia();
         objectMedia.setMediaId(fileSystem.getId());
         objectMedia.setObjectId(post.getId());
@@ -195,7 +199,7 @@ public class PostService {
         if (payload.getImagesDetails() != null && payload.getImagesDetails().size() >0) {
             for (MultipartFile multipartFile : payload.getImagesDetails()) {
                 path = new StringBuilder(PATH_IMAGE_FILE_POST).append("/" +HandleStringAndNumber.removeAccent(payload.getName())).toString();
-                fileSystem = gcsService.storeImage(compressFileComponent.compressImage(multipartFile),path);
+                fileSystem = gcsService.storeImage(compressFileComponent.compressImage(multipartFile,1.5f),path);
                 fileSystems.add(fileSystem);
                 objectMedia = new ObjectMedia();
                 objectMedia.setMediaId(fileSystem.getId());

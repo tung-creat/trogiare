@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -87,13 +88,22 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     // handle invalid payload
     @Override
     public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        String desc = null;
-        if(ex.getBindingResult() != null
-                && ex.getBindingResult().getFieldErrors() != null
-                && !ex.getBindingResult().getFieldErrors().isEmpty()){
+           logger.info("tạch");
             FieldError fieldError = ex.getBindingResult().getFieldErrors().get(0);
-            desc = String.format(fieldError.getDefaultMessage());
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(MessageResp.error(ErrorCodesEnum.INVALID_INPUT_PARAMETER.name(), desc));
+            MessageResp messageResp = new MessageResp();
+            messageResp.setResponseCode(ErrorCodesEnum.INVALID_INPUT_PARAMETER.name());
+            messageResp.setResponseDesc(fieldError.getDefaultMessage());
+            return ResponseEntity.badRequest().body(messageResp);
+    }
+
+
+    @Override
+    protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+      logger.error("lỗi");
+        FieldError fieldError = ex.getBindingResult().getFieldError();
+      MessageResp messageResp = new MessageResp();
+      messageResp.setResponseCode(ErrorCodesEnum.INVALID_INPUT_PARAMETER.name());
+      messageResp.setResponseDesc(fieldError.getDefaultMessage());
+      return ResponseEntity.badRequest().body(messageResp);
     }
 }

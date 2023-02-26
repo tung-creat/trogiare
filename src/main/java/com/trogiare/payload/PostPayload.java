@@ -27,13 +27,12 @@ public class PostPayload {
     private String district;
     @NotBlank(message = "village not blank")
     private String village;
+    @NotNull(message = "useable Are is not blank")
     private Double useableArea;
     private Double landArea;
     private Long price;
     @NotNull(message = "type real_estate is not blank")
     private TypeRealEstateEnum typeRealEstate;
-    @NotBlank(message = "area is not blank")
-    private Double area;
     private Integer bedroom;
     private String description;
     private Double facade;
@@ -43,7 +42,7 @@ public class PostPayload {
     private Integer numberFloor;
     private Integer toilet;
     private String furniture;
-    @NotBlank(message = "type post can't blank")
+    @NotNull(message = "type post can't blank")
     private PostTypeEnum typePost;
     private MultipartFile image;
     @Size(max=5 , message = "images details allow max 5 file")

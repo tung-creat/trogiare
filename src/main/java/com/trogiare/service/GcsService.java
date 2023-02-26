@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class GcsService {
@@ -50,4 +51,5 @@ public class GcsService {
         storage.delete(blobId);
          logger.info("File " + path + " was deleted from bucket " + BUCKKET_NAME);
     }
+
 }

@@ -1,51 +1,26 @@
 package com.trogiare.payload.user;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
 import javax.validation.constraints.NotBlank;
-
+@Data
+@ApiModel(description = "setpassword form")
 public class SetPassword {
-    @NotBlank(message="email can not be blank")
-    String email;
 
-    @NotBlank(message="Token can not be blank")
-    String token;
+    @ApiModelProperty(value = "Access token", required = true)
+    @NotBlank(message = "Token can not be blank")
+    String otp;
 
-    @NotBlank(message="Password can not be blank")
+    @ApiModelProperty(value = "New password", required = true)
+    @NotBlank(message = "Password can not be blank")
     String yourPassword;
 
-    @NotBlank(message="Retype Password can not be blank")
+    @ApiModelProperty(value = "Confirm new password", required = true)
+    @NotBlank(message = "Retype Password can not be blank")
     String retypePassword;
 
-    public String getEmail() {
-        return email;
-    }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public String getYourPassword() {
-        return yourPassword;
-    }
-
-    public String getRetypePassword() {
-        return retypePassword;
-    }
-
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public void setYourPassword(String yourPassword) {
-        this.yourPassword = yourPassword;
-    }
-
-    public void setRetypePassword(String retypePassword) {
-        this.retypePassword = retypePassword;
-    }
 
 }

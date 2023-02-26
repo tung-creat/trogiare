@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.trogiare.common.enumrate.TokenStatusEnum;
+import com.trogiare.common.enumrate.TokenTypeEnum;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,9 +34,11 @@ public class UserToken implements Serializable {
     @Column(name ="token",nullable = false)
     private String token;
     @Column(name="token_type",nullable = false)
-    private String tokenType;
+    @Enumerated(EnumType.STRING)
+    private TokenTypeEnum tokenType;
     @Column(name="status",nullable = false)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private TokenStatusEnum status;
     @Column(name="created_time",nullable = false)
     private LocalDateTime createdTime;
     @Column(name="expired_time",nullable = false)

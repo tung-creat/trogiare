@@ -75,7 +75,7 @@ public class NewsService {
         news.setUpdatedTime(LocalDateTime.now());
         news.setShortDescription(payload.getShortDescription());
         news = newsRepo.save(news);
-        FileSystem fileSystemImage = gcsService.storeImage(compressFileComponent.compressImage(payload.getImageAvatar()), path);
+        FileSystem fileSystemImage = gcsService.storeImage(compressFileComponent.compressImage(payload.getImageAvatar(),1.5f), path);
         ObjectMedia objectMediaImage = new ObjectMedia();
         objectMediaImage.setObjectId(news.getId());
         objectMediaImage.setMediaId(fileSystemImage.getId());
@@ -120,7 +120,7 @@ public class NewsService {
         }
         if (payload.getImageAvatar() != null) {
             String path = PATH_IMAGE_BLOGS + "/" + HandleStringAndNumber.removeAccent(payload.getTitle());
-            FileSystem fileSystemImage = gcsService.storeImage(compressFileComponent.compressImage(payload.getImageAvatar()), path);
+            FileSystem fileSystemImage = gcsService.storeImage(compressFileComponent.compressImage(payload.getImageAvatar(),2f), path);
             ObjectMedia objectMediaImage = new ObjectMedia();
             objectMediaImage.setObjectId(news.getId());
             objectMediaImage.setMediaId(fileSystemImage.getId());

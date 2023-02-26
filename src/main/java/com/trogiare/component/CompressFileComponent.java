@@ -12,13 +12,13 @@ import java.io.InputStream;
 
 @Component
 public class CompressFileComponent {
-    public byte[] compressImage(MultipartFile input) throws IOException {
+    public byte[] compressImage(MultipartFile input,Float uitDivide) throws IOException {
         BufferedImage image = ImageIO.read(input.getInputStream());
 
         // Set the compression quality to 0.5 (50%).
         float compressionQuality = 0.5f;
         // Scale the image to half its size using imgscalr library.
-        BufferedImage scaledImage = Scalr.resize(image, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_TO_WIDTH,image.getWidth() / 2,  image.getHeight() / 2, Scalr.OP_ANTIALIAS);
+        BufferedImage scaledImage = Scalr.resize(image, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_TO_WIDTH,Math.round(image.getWidth() / uitDivide),Math.round(image.getHeight() / uitDivide)  , Scalr.OP_ANTIALIAS);
 
         // Write the scaled image to a ByteArrayOutputStream.
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

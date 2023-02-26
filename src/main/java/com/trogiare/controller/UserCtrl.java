@@ -146,7 +146,7 @@ public class UserCtrl {
         FileSystem fileSystem = new FileSystem();
         if (payload.getAvatar() != null) {
             String path = new StringBuilder(PATH_IMAGE_AVATAR).append("/" + TokenUtil.generateToken(20)).toString();
-            fileSystem = gcsService.storeImage(compressFileComponent.compressImage(payload.getAvatar()), path);
+            fileSystem = gcsService.storeImage(compressFileComponent.compressImage(payload.getAvatar(),1.5f), path);
         }
         user = userOp.get();
         user.setSdt(payload.getSdt());

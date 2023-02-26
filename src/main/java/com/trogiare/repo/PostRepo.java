@@ -7,10 +7,12 @@ import com.trogiare.model.Post;
 import com.trogiare.model.impl.PostAndAddress;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,5 +49,11 @@ public interface PostRepo extends PagingAndSortingRepository<Post, String> {
                     " LEFT JOIN Address ad" +
                     " ON ad.id = p.addressId where p.id = :postId")
     Optional<PostAndAddress> getPostById(@Param("postId") String postId);
+    @Query(value="select p.ownerId from Post as p where p.id in :postIds group by p.ownerId  ")
+    List<String> checkUserIdByListPostId(@Param("postIds") List<String> postIds);
     //    addressDetails,Address.province,Address.district,Address.village
+    @Modifying
+    @Transactional
+    @Query(value="delete from Post as p where p.id in :postIds ")
+    void deletePostByListId(@Param("postIds") List<String> postIds);
 }

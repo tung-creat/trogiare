@@ -55,7 +55,7 @@ public class NewsCtrl {
         }
         StringBuilder x = new StringBuilder(Constants.getAuthority(request));
         String pathFile = PATH_IMAGE_BLOGS +"/"+ TokenUtil.generateToken(60);
-        FileSystem fileSystem = gcsService.storeImage(compressFileComponent.compressImage(file),pathFile);
+        FileSystem fileSystem = gcsService.storeImage(compressFileComponent.compressImage(file,1.5f),pathFile);
         x.append("/");
         x.append(fileSystem.getPath());
         return ResponseEntity.ok().body(x.toString());

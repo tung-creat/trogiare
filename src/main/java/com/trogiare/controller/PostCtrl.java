@@ -4,6 +4,7 @@ import com.trogiare.common.Constants;
 import com.trogiare.common.enumrate.PostTypeEnum;
 import com.trogiare.common.enumrate.TypeRealEstateEnum;
 import com.trogiare.payload.PostPayload;
+import com.trogiare.payload.PostPayloadDelete;
 import com.trogiare.respone.MessageResp;
 import com.trogiare.service.PostService;
 import com.trogiare.utils.UserUtil;
@@ -16,8 +17,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/posts")
@@ -28,7 +31,7 @@ public class PostCtrl {
 
     @RequestMapping(path="",method = RequestMethod.POST)
     @ApiOperation(value = "save post", response = MessageResp.class)
-    public HttpEntity<?> savePost(@ModelAttribute PostPayload payload) throws IOException {
+    public HttpEntity<?> savePost(@Valid @ModelAttribute PostPayload payload) throws IOException {
         logger.info("type bat dong san " +payload.getTypeRealEstate());
         String uid = UserUtil.getUserId();
         MessageResp messageResp = postService.savePost(payload,uid);
@@ -65,10 +68,10 @@ public class PostCtrl {
         MessageResp messageResp = postService.getPostById(request,postId);
         return ResponseEntity.ok().body(messageResp);
     }
-    @RequestMapping(path="/delete-post-by-id/{postId}",method = RequestMethod.PUT)
+    @RequestMapping(path="/delete-post-by-list-id",method = RequestMethod.PUT)
     @ApiOperation(value = "Delete Product", response = MessageResp.class)
-    public HttpEntity<?> deletePostById(@PathVariable(value="postId") String postId){
-        MessageResp messageResp = postService.deletePostById(postId);
+    public HttpEntity<?> deletePostById(@RequestBody PostPayloadDelete payload){
+        MessageResp messageResp = postService.deletePostByIds(payload.getPostIds());
         return ResponseEntity.ok().body(messageResp);
     }
 }

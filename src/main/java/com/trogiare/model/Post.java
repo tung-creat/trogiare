@@ -69,7 +69,7 @@ public class Post implements Serializable {
     private LocalDateTime expirationDate;
     @Column(name="owner_id",nullable = false)
     private String ownerId;
-    @Column(name="type_post")
+    @Column(name="type_post",nullable = false)
     @Enumerated(EnumType.STRING)
     private PostTypeEnum typePost;
     @Column(name="post_code",nullable = false)

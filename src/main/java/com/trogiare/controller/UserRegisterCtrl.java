@@ -2,6 +2,7 @@ package com.trogiare.controller;
 
 import com.trogiare.common.enumrate.*;
 import com.trogiare.exception.BadRequestException;
+import com.trogiare.exception.InputInvalidException;
 import com.trogiare.model.User;
 import com.trogiare.model.UserRole;
 import com.trogiare.model.UserToken;
@@ -16,6 +17,8 @@ import com.trogiare.service.EmailService;
 import com.trogiare.utils.TokenUtil;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.trogiare.respone.MessageResp;
 import org.springframework.data.domain.PageRequest;
@@ -37,7 +40,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping(path="/api/v1/reg")
 public class UserRegisterCtrl {
-
+    static final Logger logger = LoggerFactory.getLogger(UserRegisterCtrl.class);
     @Autowired
     private UserRepo userRepo;
     @Autowired
@@ -90,8 +93,8 @@ public class UserRegisterCtrl {
         UserToken userToken = new UserToken();
         userToken.setUserId(user.getId());
         userToken.setToken(token);
-        userToken.setTokenType(TokenTypeEnum.VERIFYING_EMAIL.name());
-        userToken.setStatus(TokenStatusEnum.WAITING.name());
+        userToken.setTokenType(TokenTypeEnum.VERIFYING_EMAIL);
+        userToken.setStatus(TokenStatusEnum.WAITING);
         userToken.setCreatedTime(LocalDateTime.now());
         userToken.setExpiredTime(LocalDateTime.now().plusHours(TokenUtil.EXPRIED_TOKEN));
         userTokenRepo.save(userToken);
@@ -116,7 +119,7 @@ public class UserRegisterCtrl {
         }
         if(userToken.getExpiredTime().isBefore(LocalDateTime.now())){
             log.info("Token expried");
-            userToken.setStatus(TokenStatusEnum.EXPIRED.name());
+            userToken.setStatus(TokenStatusEnum.EXPIRED);
             userTokenRepo.save(userToken);
             throw new BadRequestException(ErrorCodesEnum.TOKEN_EXPIRED);
         }
@@ -127,7 +130,7 @@ public class UserRegisterCtrl {
         user.setUpdatedTime(LocalDateTime.now());
         user = userRepo.save(user);
         //set status token
-        userToken.setStatus(TokenStatusEnum.ACCEPTED.name());
+        userToken.setStatus(TokenStatusEnum.ACCEPTED);
         userTokenRepo.save(userToken);
         emailService.sendWelcomeMember(user);
         return ResponseEntity.ok(MessageResp.ok());
@@ -152,7 +155,7 @@ public class UserRegisterCtrl {
                 TokenTypeEnum.VERIFYING_EMAIL.name(), PageRequest.of(0,1));
         if(TokensRequestedLastest.size() == 1 && TokensRequestedLastest.get(0).getStatus().equals(TokenStatusEnum.WAITING.name())){
             UserToken usertokenRequestedLastest = TokensRequestedLastest.get(0);
-            usertokenRequestedLastest.setStatus(TokenStatusEnum.DISABLED.name());
+            usertokenRequestedLastest.setStatus(TokenStatusEnum.DISABLED);
             userTokenRepo.save(usertokenRequestedLastest);
         }
         // get 3 token same type
@@ -176,8 +179,8 @@ public class UserRegisterCtrl {
         userToken.setUserId(user.getId());
         userToken.setCreatedTime(LocalDateTime.now());
         userToken.setExpiredTime(LocalDateTime.now().plusHours(TokenUtil.EXPRIED_TOKEN));
-        userToken.setStatus(TokenStatusEnum.WAITING.name());
-        userToken.setTokenType(TokenTypeEnum.VERIFYING_EMAIL.name());
+        userToken.setStatus(TokenStatusEnum.WAITING);
+        userToken.setTokenType(TokenTypeEnum.VERIFYING_EMAIL);
         userToken = userTokenRepo.save(userToken);
         emailService.sendVerifyingReq(user,userToken.getToken(),referer);
         return ResponseEntity.ok(MessageResp.ok());
@@ -203,8 +206,8 @@ public class UserRegisterCtrl {
         UserToken userToken =  new UserToken();
         userToken.setToken(authToken);
         userToken.setUserId(user.getId());
-        userToken.setTokenType(TokenTypeEnum.FORGOT_PASSWORD.name());
-        userToken.setStatus(TokenStatusEnum.WAITING.name());
+        userToken.setTokenType(TokenTypeEnum.FORGOT_PASSWORD);
+        userToken.setStatus(TokenStatusEnum.WAITING);
         userToken.setCreatedTime(LocalDateTime.now());
         userToken.setExpiredTime(LocalDateTime.now().plusHours(TokenUtil.EXPRIED_TOKEN));
         userTokenRepo.save(userToken);
@@ -216,38 +219,36 @@ public class UserRegisterCtrl {
     @ApiOperation(value = "set new password affter request forgot password", response = MessageResp.class)
     public HttpEntity<Object> setNewPasswordByToken(@Valid @RequestBody SetPassword payload) {
         if (!payload.getYourPassword().equals(payload.getRetypePassword())) {
-            log.info("Password can NOT be empty, Password and Retype password must be matched each other");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(MessageResp.error(ErrorCodesEnum.REPASSWORD_NOT_EQUALS_PASSWORD));
+            logger.info("Password can NOT be empty, Password and Retype password must be matched each other");
+            throw  new InputInvalidException("password and retype password must be equal");
         }
-        Optional<User> userOp = userRepo.findByUsernameOrEmail(payload.getEmail());
-        if(!userOp.isPresent()){
-            throw new BadRequestException(ErrorCodesEnum.ACCOUNT_NOT_EXIST);
-        }
-        User user = userOp.get();
-        String token = payload.getToken();
-        Optional<UserToken> userTokenOtp = userTokenRepo.findByTokenAndUserId(token,user.getId());
+        String token = payload.getOtp();
+        Optional<UserToken> userTokenOtp = userTokenRepo.findByToken(token);
         if (!userTokenOtp.isPresent()) {
-            log.info("NOT valid Token");
+            logger.info("NOT valid Token");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(MessageResp.error(ErrorCodesEnum.INVALID_TOKEN));
         }
         UserToken userToken = userTokenOtp.get();
-        if(userToken.getExpiredTime().isBefore(LocalDateTime.now())){
-            log.info("Token expried");
-            userToken.setStatus(TokenStatusEnum.EXPIRED.name());
+        if (userToken.getExpiredTime().isBefore(LocalDateTime.now())) {
+            logger.info("Token expried");
+            userToken.setStatus(TokenStatusEnum.EXPIRED);
             userTokenRepo.save(userToken);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(MessageResp.error(ErrorCodesEnum.TOKEN_EXPIRED));
         }
-        if(userToken.getStatus().equals(TokenStatusEnum.ACCEPTED.name())){
+        if (userToken.getStatus() == TokenStatusEnum.ACCEPTED) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(MessageResp.error(ErrorCodesEnum.TOKEN_EXPIRED));
         }
+
         //change status Token
-        userToken.setStatus(TokenStatusEnum.ACCEPTED.name());
+        userToken.setStatus(TokenStatusEnum.ACCEPTED);
         userTokenRepo.save(userToken);
         //update password for user
+        Optional<User> userOtp = userRepo.findById(userToken.getUserId());
+        User user = userOtp.get();
         user.setPassword(passwordEncoder.encode(payload.getYourPassword()));
         userRepo.save(user);
 //        mailSender.sendChangePasswordSuccess(user);
-        return ResponseEntity.ok(MessageResp.ok());
+        return ResponseEntity.ok(MessageResp.ok(user));
     }
 
     private boolean checkValidNumberRequest(List<UserToken> userTokens){
