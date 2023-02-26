@@ -4,10 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.trogiare.common.enumrate.PostDirectionHouseEnum;
 import com.trogiare.common.enumrate.PostTypeEnum;
-import com.trogiare.common.enumrate.TimeUnitUseEnum;
+import com.trogiare.common.enumrate.TypeRealEstateEnum;
 import com.trogiare.model.Address;
 import com.trogiare.model.Post;
-import com.trogiare.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,6 +35,7 @@ public class PostResp {
     private Integer numberFloor;
     private Integer toilet;
     private String furniture;
+    private TypeRealEstateEnum typeRealEstate;
     private LocalDateTime createdTime;
     private LocalDateTime expirationDate;
     private String ownerId;
@@ -73,5 +73,6 @@ public class PostResp {
         this.typePost = post.getTypePost();
         this.landArea = post.getLandArea();
         this.useableArea = post.getUseableArea();
+        this.typeRealEstate = post.getTypeRealEstate();
     }
 }

@@ -86,7 +86,7 @@ public class PostService {
                                 ) throws URISyntaxException {
       String URI_AUTHORITY = Constants.getAuthority(request);
         Pageable pageable = PageRequest.of(page,size, Sort.by("price"));
-       Page<PostAndAddress> postAndAddressPage = postRepo.getPosts(pageable,address,priceMin,priceMax,keyword,areaMin,areaMax,bedRoom,type);
+       Page<PostAndAddress> postAndAddressPage = postRepo.getPosts(pageable,address,priceMin,priceMax,keyword,areaMin,areaMax,bedRoom,type,PostStatusEnum.PUBLIC);
         List<PostAndAddress>  postAndAddressList =  postAndAddressPage.getContent();
        Map<String,PostResp> postRespMap = new HashMap<>();
         List<String> postIds = new ArrayList<>();

@@ -2,8 +2,7 @@ package com.trogiare.payload;
 
 import com.trogiare.common.enumrate.PostDirectionHouseEnum;
 import com.trogiare.common.enumrate.PostTypeEnum;
-import com.trogiare.common.enumrate.PostTypeReftValueEnum;
-import com.trogiare.common.enumrate.TimeUnitUseEnum;
+import com.trogiare.common.enumrate.TypeRealEstateEnum;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,7 +31,7 @@ public class PostPayload {
     private Double landArea;
     private Long price;
     @NotNull(message = "type real_estate is not blank")
-    private PostTypeReftValueEnum typeRealEstate;
+    private TypeRealEstateEnum typeRealEstate;
     @NotBlank(message = "area is not blank")
     private Double area;
     private Integer bedroom;

@@ -2,6 +2,7 @@ package com.trogiare.controller;
 
 import com.trogiare.common.Constants;
 import com.trogiare.common.enumrate.PostTypeEnum;
+import com.trogiare.common.enumrate.TypeRealEstateEnum;
 import com.trogiare.payload.PostPayload;
 import com.trogiare.respone.MessageResp;
 import com.trogiare.service.PostService;
@@ -28,7 +29,7 @@ public class PostCtrl {
     @RequestMapping(path="",method = RequestMethod.POST)
     @ApiOperation(value = "save post", response = MessageResp.class)
     public HttpEntity<?> savePost(@ModelAttribute PostPayload payload) throws IOException {
-        logger.info("type bat dong san " +payload.getTypeRealEstate().name());
+        logger.info("type bat dong san " +payload.getTypeRealEstate());
         String uid = UserUtil.getUserId();
         MessageResp messageResp = postService.savePost(payload,uid);
         return ResponseEntity.ok().body(messageResp);
@@ -38,7 +39,8 @@ public class PostCtrl {
     @ApiOperation(value = "get all product and filter", response = MessageResp.class)
     public HttpEntity<?> getAllPost(@RequestParam(required = false) Integer page ,
                                     @RequestParam(required = false) Integer size,
-                                    @RequestParam(required = false,name = "type") String type,
+                                    @RequestParam(required = false,name = "type") PostTypeEnum type,
+//                                    @RequestParam(required = false, name="type-estate") TypeRealEstateEnum typeEstate,
                                     @RequestParam(required = false) String keyword,
                                     @RequestParam(required = false) String address,
                                     @RequestParam(required = false) Long priceMin,
@@ -47,14 +49,14 @@ public class PostCtrl {
                                     @RequestParam(required = false) Long areaMax,
                                     @RequestParam(required = false) Long bedRoom,
                                     HttpServletRequest request) throws URISyntaxException {
-        if(page == null){
+        if(page == null || page < 0){
             page = Constants.DEFAULT_PAGE;
         }
-        if(size == null){
+        if(size == null || size < 0){
             size = Constants.ITEM_PER_PAGE;
         }
 
-        MessageResp messageResp = postService.getPosts(request,size,page,address,priceMin,priceMax,keyword,areaMin,areaMax,bedRoom,PostTypeEnum.getEnum(type));
+        MessageResp messageResp = postService.getPosts(request,size,page,address,priceMin,priceMax,keyword,areaMin,areaMax,bedRoom,type);
         return ResponseEntity.ok().body(messageResp);
     }
     @RequestMapping(path="/get-post-by-id/{postId}",method = RequestMethod.GET)

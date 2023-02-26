@@ -3,7 +3,10 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.trogiare.common.enumrate.*;
+import com.trogiare.common.enumrate.PostDirectionHouseEnum;
+import com.trogiare.common.enumrate.PostStatusEnum;
+import com.trogiare.common.enumrate.PostTypeEnum;
+import com.trogiare.common.enumrate.TypeRealEstateEnum;
 import com.trogiare.payload.PostPayload;
 import com.trogiare.utils.HandleStringAndNumber;
 import javax.persistence.*;
@@ -32,9 +35,8 @@ public class Post implements Serializable {
     private String id;
     @Column(nullable = false)
     private String name;
-    @Column(name="address_id")
+    @Column(name="address_id",nullable = false)
     private String addressId;
-    @Column(name ="time_unit_use")
     private Long price;
     @Column(name="compact_number")
     private String compactNumber;
@@ -44,7 +46,7 @@ public class Post implements Serializable {
     private Double landArea;
     @Column(name="type_real_estate",nullable = false)
     @Enumerated(EnumType.STRING)
-    private PostTypeReftValueEnum typeRealEstate;
+    private TypeRealEstateEnum typeRealEstate;
     private Integer bedroom;
     @Lob
     @Column(name="description",columnDefinition = "TEXT")
@@ -55,6 +57,8 @@ public class Post implements Serializable {
     private String juridical;
     private Double gateway;
     private Integer numberFloor;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private PostStatusEnum status;
     private Integer toilet;
     private String furniture;
