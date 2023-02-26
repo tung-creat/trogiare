@@ -13,28 +13,18 @@ public enum TypeRealEstateEnum {
     COMMERCIAL_TOWNHOUSES("Nhà phố thương mại"),
     GROUND("Mặt bằng"),
     OTHER("Bất động sản khác");
-
-    private static Map<String, TypeRealEstateEnum> map = new HashMap<>();
-    static {
-        for (TypeRealEstateEnum type : TypeRealEstateEnum.values()) {
-            map.put(type.value.toLowerCase(), type);
-        }
-    }
-
-    private final String value;
-
-    TypeRealEstateEnum(String value) {
+    String value;
+    private static Map<String,TypeRealEstateEnum> map = new HashMap<>();
+    TypeRealEstateEnum(String value){
         this.value = value;
     }
-
-    public static TypeRealEstateEnum valueOfIgnoreCase(String value) {
-        if(value == null){
-            return null;
+    public static TypeRealEstateEnum getEnum(String value){
+        if(map.size() != 0){
+            return map.get(value.toUpperCase());
+        }
+        for(TypeRealEstateEnum x : TypeRealEstateEnum.values()){
+            map.put(x.name().toLowerCase(),x);
         }
         return map.get(value.toLowerCase());
-    }
-
-    public String getValue() {
-        return value;
     }
 }

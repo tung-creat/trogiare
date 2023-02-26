@@ -82,11 +82,11 @@ public class PostService {
 
     public MessageResp getPosts(HttpServletRequest request , Integer size,
                                 Integer page, String address, Long priceMin, Long priceMax, String keyword,
-                                Long areaMin, Long areaMax, Long bedRoom, PostTypeEnum type
+                                Long areaMin, Long areaMax, Long bedRoom, PostTypeEnum type,TypeRealEstateEnum typeRealEstate
                                 ) throws URISyntaxException {
       String URI_AUTHORITY = Constants.getAuthority(request);
         Pageable pageable = PageRequest.of(page,size, Sort.by("price"));
-       Page<PostAndAddress> postAndAddressPage = postRepo.getPosts(pageable,address,priceMin,priceMax,keyword,areaMin,areaMax,bedRoom,type,PostStatusEnum.PUBLIC);
+       Page<PostAndAddress> postAndAddressPage = postRepo.getPosts(pageable,address,priceMin,priceMax,keyword,areaMin,areaMax,bedRoom,type,typeRealEstate == null ?null :typeRealEstate.name(),PostStatusEnum.PUBLIC);
         List<PostAndAddress>  postAndAddressList =  postAndAddressPage.getContent();
        Map<String,PostResp> postRespMap = new HashMap<>();
         List<String> postIds = new ArrayList<>();

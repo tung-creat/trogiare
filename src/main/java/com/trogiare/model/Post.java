@@ -45,8 +45,7 @@ public class Post implements Serializable {
     @Column(name="land_area")
     private Double landArea;
     @Column(name="type_real_estate",nullable = false)
-    @Enumerated(EnumType.STRING)
-    private TypeRealEstateEnum typeRealEstate;
+    private String typeRealEstate;
     private Integer bedroom;
     @Lob
     @Column(name="description",columnDefinition = "TEXT")
@@ -92,7 +91,7 @@ public class Post implements Serializable {
         this.setNumberFloor(payload.getNumberFloor());
         this.setToilet(payload.getToilet());
         this.setPrice(payload.getPrice());
-        this.setTypeRealEstate(payload.getTypeRealEstate());
+        this.setTypeRealEstate(payload.getTypeRealEstate().name());
         if(payload.getPrice() != null){
             this.setCompactNumber(HandleStringAndNumber.compactNumber(payload.getPrice()));
         }

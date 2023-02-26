@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum PostTypeEnum {
-    RENT,SELL_HOUSE;
+    RENT,SELL;
     private static Map<String,PostTypeEnum> map = new HashMap<>();
     public static PostTypeEnum getEnum(String value){
         if(value ==null){

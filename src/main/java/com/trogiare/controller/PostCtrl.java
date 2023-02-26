@@ -40,7 +40,7 @@ public class PostCtrl {
     public HttpEntity<?> getAllPost(@RequestParam(required = false) Integer page ,
                                     @RequestParam(required = false) Integer size,
                                     @RequestParam(required = false,name = "type") PostTypeEnum type,
-//                                    @RequestParam(required = false, name="type-estate") TypeRealEstateEnum typeEstate,
+                                    @RequestParam(required = false, name="type-estate") TypeRealEstateEnum typeEstate,
                                     @RequestParam(required = false) String keyword,
                                     @RequestParam(required = false) String address,
                                     @RequestParam(required = false) Long priceMin,
@@ -56,7 +56,7 @@ public class PostCtrl {
             size = Constants.ITEM_PER_PAGE;
         }
 
-        MessageResp messageResp = postService.getPosts(request,size,page,address,priceMin,priceMax,keyword,areaMin,areaMax,bedRoom,type);
+        MessageResp messageResp = postService.getPosts(request,size,page,address,priceMin,priceMax,keyword,areaMin,areaMax,bedRoom,type,typeEstate);
         return ResponseEntity.ok().body(messageResp);
     }
     @RequestMapping(path="/get-post-by-id/{postId}",method = RequestMethod.GET)

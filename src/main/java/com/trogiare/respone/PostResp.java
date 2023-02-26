@@ -35,7 +35,7 @@ public class PostResp {
     private Integer numberFloor;
     private Integer toilet;
     private String furniture;
-    private TypeRealEstateEnum typeRealEstate;
+    private String typeRealEstate;
     private LocalDateTime createdTime;
     private LocalDateTime expirationDate;
     private String ownerId;

@@ -26,8 +26,8 @@ public interface PostRepo extends PagingAndSortingRepository<Post, String> {
                     "AND (:areaMin is null OR p.useableArea >= :areaMin) " +
                     "AND (:areaMax is null OR p.useableArea <= :areaMax) " +
                     "AND (:bedRoom is null OR p.bedroom = :bedRoom) " +
-                    "AND (:type is null OR p.typePost = :type) " )
-//                    "AND (:typeRealEstate is null OR p.typeRealEstate = :typeRealEstate)")
+                    "AND (:type is null OR p.typePost = :type) "+
+                    "AND (:typeRealEstate is null OR p.typeRealEstate = :typeRealEstate)")
     Page<PostAndAddress> getPosts(Pageable pageable,
                                   @Param("address") String address,
                                   @Param("priceMin") Long priceMin,
@@ -37,7 +37,7 @@ public interface PostRepo extends PagingAndSortingRepository<Post, String> {
                                   @Param("areaMax") Long areaMax,
                                   @Param("bedRoom") Long bedRoom,
                                   @Param("type") PostTypeEnum type,
-//                                  @Param("typeRealEstate") TypeRealEstateEnum typeRealEstate,
+                                  @Param("typeRealEstate") String typeRealEstate,
                                   @Param("status") PostStatusEnum status);
 
 
