@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class GcsService {
 
     public FileSystem storeImage(byte [] file, String path) throws IOException {
         path = path+TokenUtil.generateToken(10) + ".jpeg";
-        BlobId blobId = BlobId.of(BUCKKET_NAME,path );
+        BlobId blobId = BlobId.of(BUCKKET_NAME, path);
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
         Blob blob = storage.create(blobInfo,file);
         FileSystem fileSystem = new FileSystem();

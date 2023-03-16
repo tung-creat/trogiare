@@ -32,7 +32,7 @@ public class ViewAndDowloadFIle {
     private GcsService gcsService;
 
     @Transactional
-    @RequestMapping(path = "/trogiare/images/**", method = RequestMethod.GET)
+    @RequestMapping(path = "/trogiare/**", method = RequestMethod.GET)
 //
     public HttpEntity<?> getImage(HttpServletRequest request) throws IOException {
         System.out.println(request.getServletPath());

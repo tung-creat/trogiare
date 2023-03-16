@@ -1,4 +1,4 @@
-package com.trogiare.payload;
+package com.trogiare.payload.post;
 
 import lombok.Data;
 

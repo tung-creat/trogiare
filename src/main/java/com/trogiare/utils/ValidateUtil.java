@@ -1,5 +1,7 @@
 package com.trogiare.utils;
 
+import java.util.List;
+
 public class ValidateUtil {
 
     public static boolean isEmpty(String input){
@@ -14,5 +16,11 @@ public class ValidateUtil {
             return true;
         }
         return false;
+    }
+    public static boolean isEmpty(List list){
+        if(list == null ||  list.isEmpty()){
+            return true;
+        }
+        return  false;
     }
 }

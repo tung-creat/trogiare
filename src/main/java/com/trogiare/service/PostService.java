@@ -5,16 +5,18 @@ import com.trogiare.common.enumrate.*;
 import com.trogiare.component.CompressFileComponent;
 import com.trogiare.component.PostCodeComponent;
 import com.trogiare.exception.BadRequestException;
+import com.trogiare.exception.InputInvalidException;
 import com.trogiare.model.*;
 import com.trogiare.model.impl.PostAndAddress;
 import com.trogiare.model.impl.ObjectIddAndPathImages;
-import com.trogiare.payload.PostPayload;
+import com.trogiare.payload.post.PostPayload;
 import com.trogiare.repo.*;
 import com.trogiare.respone.MessageResp;
 import com.trogiare.respone.PostResp;
 import com.trogiare.respone.UserResp;
 import com.trogiare.utils.HandleStringAndNumber;
 import com.trogiare.utils.UserUtil;
+import com.trogiare.utils.ValidateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +80,27 @@ public class PostService {
         post = postRepo.save(post);
         saveImagesPost(payload, post);
         return MessageResp.ok(post);
+    }
+    @Transactional
+    public MessageResp updatePost(PostPayload payload){
+        String userUtil = UserUtil.getUserId();
+        Optional<Post> postOp = postRepo.findById(payload.getPostId());
+        if(ValidateUtil.isEmpty(payload.getPostId())){
+            throw new InputInvalidException("post Id is not null");
+        }
+        if(!postOp.isPresent()){
+            throw new BadRequestException(ErrorCodesEnum.NOT_FOUND_POST);
+        }
+        if(!postOp.get().getOwnerId().equals(userUtil)){
+            throw new BadRequestException(ErrorCodesEnum.ACCESS_DENIED);
+        }
+        Post post = postOp.get();
+        post.setInformationFromPayLoad(payload);
+        post = postRepo.save(post);
+
+        return null;
+
+
     }
 
     public MessageResp getPosts(HttpServletRequest request , Integer size,

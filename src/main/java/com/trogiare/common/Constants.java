@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public class Constants {
     public static Integer ITEM_PER_PAGE = 20;
+    public static Integer ITEM_MESSAGE = 10;
     public static Integer DEFAULT_PAGE = 0;
     public static String URI_AUTHORITY;
     private static Long code = 1l;

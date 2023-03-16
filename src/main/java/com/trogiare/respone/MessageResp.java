@@ -51,7 +51,18 @@ public class MessageResp  implements Serializable {
     }
     public static MessageResp page(Page page){
         MessageResp messageResp = new MessageResp();
+        messageResp.setResponseCode(SUCCESS);
         messageResp.setResult(page.getContent());
+        messageResp.setPage(page.getNumber());
+        messageResp.setSize(page.getSize());
+        messageResp.setTotal(page.getTotalElements());
+        messageResp.setTotalPage(page.getTotalPages());
+        return messageResp;
+    }
+    public static MessageResp page(Page page,Object object){
+        MessageResp messageResp = new MessageResp();
+        messageResp.setResponseCode(SUCCESS);
+        messageResp.setResult(object);
         messageResp.setPage(page.getNumber());
         messageResp.setSize(page.getSize());
         messageResp.setTotal(page.getTotalElements());
@@ -60,6 +71,7 @@ public class MessageResp  implements Serializable {
     }
     public static MessageResp page(Page page, List listContent){
         MessageResp messageResp = new MessageResp();
+        messageResp.setResponseCode(SUCCESS);
         messageResp.setResult(listContent);
         messageResp.setPage(page.getNumber());
         messageResp.setSize(page.getSize());

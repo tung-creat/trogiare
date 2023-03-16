@@ -3,8 +3,10 @@ package com.trogiare.controller;
 import com.trogiare.common.Constants;
 import com.trogiare.common.enumrate.PostTypeEnum;
 import com.trogiare.common.enumrate.TypeRealEstateEnum;
-import com.trogiare.payload.PostPayload;
-import com.trogiare.payload.PostPayloadDelete;
+import com.trogiare.model.Message;
+import com.trogiare.payload.post.PostPayload;
+import com.trogiare.payload.post.PostPayloadDelete;
+import com.trogiare.repo.MessageRepo;
 import com.trogiare.respone.MessageResp;
 import com.trogiare.service.PostService;
 import com.trogiare.utils.UserUtil;
@@ -20,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -28,6 +31,8 @@ public class PostCtrl {
     private static final Logger logger = LoggerFactory.getLogger(PostCtrl.class);
     @Autowired
     private PostService postService;
+    @Autowired
+    private MessageRepo messageRepo;
 
     @RequestMapping(path="",method = RequestMethod.POST)
     @ApiOperation(value = "save post", response = MessageResp.class)
@@ -74,4 +79,15 @@ public class PostCtrl {
         MessageResp messageResp = postService.deletePostByIds(payload.getPostIds());
         return ResponseEntity.ok().body(messageResp);
     }
+//    @RequestMapping(path="/test",method = RequestMethod.POST)
+//    public HttpEntity<?> test(@RequestBody Message message){
+//        ConverStation converStation = new ConverStation();
+//        converStation.setUidFirst("xxxx");
+//        converStation.setUidSecond("xxxxxxxx");
+//        converStation.setCreatedTime(LocalDateTime.now());
+//        converStation.setMessageList(List.of(message));
+//        converStationRepo.save(converStation);
+//        return ResponseEntity.ok().body(message);
+//
+//    }
 }

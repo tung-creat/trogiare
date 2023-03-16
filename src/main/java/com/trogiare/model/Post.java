@@ -6,15 +6,13 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.trogiare.common.enumrate.PostDirectionHouseEnum;
 import com.trogiare.common.enumrate.PostStatusEnum;
 import com.trogiare.common.enumrate.PostTypeEnum;
-import com.trogiare.common.enumrate.TypeRealEstateEnum;
-import com.trogiare.payload.PostPayload;
+import com.trogiare.payload.post.PostPayload;
 import com.trogiare.utils.HandleStringAndNumber;
 import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -98,5 +96,4 @@ public class Post implements Serializable {
         this.setTypePost(payload.getTypePost());
 
     }
-
 }

@@ -1,4 +1,4 @@
-package com.trogiare.payload;
+package com.trogiare.payload.post;
 
 import com.trogiare.common.enumrate.PostDirectionHouseEnum;
 import com.trogiare.common.enumrate.PostTypeEnum;
@@ -16,6 +16,7 @@ import java.util.List;
 @Setter
 @Getter
 public class PostPayload {
+    private String postId;
     @NotBlank(message = "name not blank")
     @Size(max=500,message = "allow name post max = 500 character ")
     private String name;
@@ -47,6 +48,7 @@ public class PostPayload {
     private MultipartFile image;
     @Size(max=5 , message = "images details allow max 5 file")
     private List<MultipartFile> imagesDetails;
+    private List<String>  imageDelete;
 
 
 }
