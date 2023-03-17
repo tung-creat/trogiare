@@ -20,6 +20,7 @@ public class Message {
     private String id;
     private String content;
     private LocalDateTime timestamp;
+    private String conversationId;
     private String uidSender;
     private String uidRecipient;
     private Boolean isRead = false;

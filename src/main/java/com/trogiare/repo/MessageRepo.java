@@ -14,20 +14,11 @@ import java.util.List;
 
 @Repository
 public interface MessageRepo extends MongoRepository<Message,String> {
-    @Query("[ " +
-            "{$match: { $or: [{uidSender: ?0}, {uidRecipient: ?0}] }}, " +
-            "{$sort: {timestamp: -1}}, " +
-            "{$group: {_id: {$cond: [{$eq: ['$uidSender', ?0]}, '$uidRecipient', '$uidSender']}, message: {$first: '$$ROOT'}}}, " +
-            "{$replaceRoot: {newRoot: '$message'}}, " +
-            "{$skip: ?1}, " +
-            "{$limit: ?2} " +
-            "]")
-    List<Message> findMessagesByUid(String uid, int skip, int limit);
-
 
 
     @Query("{ $or : [ { uidSender : ?0, uidRecipient : ?1 }, { uidSender : ?1, uidRecipient : ?0 } ] }")
     Page<Message> findLatestMessages(String uidSender, String uidRecipient, Pageable pageable);
+    List<Message> findAllByIdInOrderByTimestampDesc(List<String> messageIds);
 
 
 }

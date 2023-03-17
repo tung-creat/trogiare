@@ -6,7 +6,6 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 @Data
 public class MessagePayload {
-
     @NotNull(message = "content is not blank")
     private String content;
     @NotNull(message = "uidSender is not blank")

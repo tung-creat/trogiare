@@ -11,6 +11,7 @@ import java.util.List;
 public class ConverStationMessageResp {
     private String userId;
     private String fullName;
+    private String converStationId;
     private String avatarImage;
     private List<Message> messageList;
 
