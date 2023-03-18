@@ -46,6 +46,8 @@ public class PostService {
     @Autowired
     private GcsService gcsService;
     @Autowired
+    private ProvincesRepo provincesRepo;
+    @Autowired
     private FileSystemRepo fileSystemRepo;
 
     @Autowired
@@ -62,11 +64,15 @@ public class PostService {
 
     @Transactional
     public MessageResp savePost(PostPayload payload,String uid) throws IOException {
+        List<Object[]> addressObject = provincesRepo.getDetailAddress(payload.getProvinceId(),payload.getDistrictId(),payload.getVillageId());
+        if(addressObject == null || addressObject.size() < 0){
+            throw new InvalidPropertiesFormatException("Address inputed not valid");
+        }
         Address address = new Address();
         address.setAddressDetails(payload.getAddressDetails());
-        address.setVillage(payload.getVillage());
-        address.setDistrict(payload.getDistrict());
-        address.setProvince(payload.getProvince());
+        address.setVillage((String) addressObject.get(0)[2]);
+        address.setDistrict((String) addressObject.get(0)[1]);
+        address.setProvince((String) addressObject.get(0)[0]);
         address =addressRepo.save(address);
         Post post = new Post();
         post.setInformationFromPayLoad(payload);

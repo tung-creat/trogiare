@@ -22,12 +22,12 @@ public class PostPayload {
     private String name;
     @NotBlank(message = "address not blank")
     private String addressDetails;
-    @NotBlank(message = "province not blank")
-    private String province;
-    @NotBlank(message = "district not blank")
-    private String district;
-    @NotBlank(message = "village not blank")
-    private String village;
+    @NotBlank(message = "provinceId not blank")
+    private String provinceId;
+    @NotBlank(message = "districtId not blank")
+    private String districtId;
+    @NotBlank(message = "villageId not blank")
+    private String villageId;
     @NotNull(message = "useable Are is not blank")
     private Double useableArea;
     private Double landArea;

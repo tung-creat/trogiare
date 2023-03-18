@@ -9,6 +9,8 @@ import com.trogiare.common.enumrate.PostTypeEnum;
 import com.trogiare.payload.post.PostPayload;
 import com.trogiare.utils.HandleStringAndNumber;
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
