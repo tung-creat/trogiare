@@ -33,6 +33,25 @@ public interface ObjectMediaRepo extends PagingAndSortingRepository<ObjectMedia,
             "join file_system as m  ON o.media_id = m.id " +
             "WHERE o.object_id in :objectIds", nativeQuery = true)
     void deleteObjectMediaAndMediaByObjectIds(@Param("objectIds")List<String> objectIds);
+    @Transactional
+    @Modifying
+    @Query(value="delete o, m " +
+            "from object_media as o " +
+            "join file_system as m  ON o.media_id = m.id " +
+            "WHERE m.path in :paths", nativeQuery = true)
+    void deleteObjectMediaAndMediaByPaths(@Param("paths")List<String> paths);
+    @Transactional
+    @Modifying
+    @Query(value="delete o, m " +
+            "from object_media as o " +
+            "join file_system as m  ON o.media_id = m.id " +
+            "WHERE o.object_id = ? 1 and o.refType ='IMAGE_POST' ", nativeQuery = true)
+    void deleteObjectMediaAndMediaAvatarByObjectIds(String idObject);
+    @Query(value="select f.path " +
+            " from ObjectMedia ob left join FileSystem f " +
+            " on ob.mediaId = f.id where ob.objectId = :objectId and (:reftype is null or ob.refType = :reftype)")
+    String getPathImageAvatarFromObjectId(@Param("objectId") String objectId,@Param("reftype") String reftype);
+
     Optional<ObjectMedia> findByObjectId(String objectId);
     Optional<ObjectMedia> findByMediaId(String mediaId);
 }

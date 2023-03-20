@@ -73,7 +73,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     public ResponseEntity<Object> handleInputInvalidException(InputInvalidException ex) {
         MessageResp errorResponse = new MessageResp();
         errorResponse.setResponseCode(ErrorCodesEnum.INVALID_INPUT_PARAMETER.name());
-        errorResponse.setResponseDesc(ex.getMessage());
+        errorResponse.setResponseDesc(ex.getResponseDesc());
         return ResponseEntity.badRequest().body(errorResponse);
     }
 

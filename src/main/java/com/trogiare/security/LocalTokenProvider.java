@@ -30,7 +30,7 @@ public class LocalTokenProvider {
         Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION);
         Gson gson = new Gson();
         TokenObject tokenObject = new TokenObject();
-        tokenObject.setUserName(user.getUsername());
+        tokenObject.setUserName(user.getSdt());
         tokenObject.setFirstName(user.getFirstName());
         tokenObject.setRoles(roles);
         String sub = gson.toJson(tokenObject);

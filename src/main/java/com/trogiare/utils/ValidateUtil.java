@@ -1,5 +1,7 @@
 package com.trogiare.utils;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 public class ValidateUtil {
@@ -17,8 +19,14 @@ public class ValidateUtil {
         }
         return false;
     }
+    public static boolean isEmpty(MultipartFile multipartFile){
+        if(multipartFile == null || multipartFile.isEmpty() || multipartFile.getSize() < 1){
+            return true;
+        }
+        return false;
+    }
     public static boolean isEmpty(List list){
-        if(list == null ||  list.isEmpty()){
+        if(list == null ||  list.isEmpty() || list.size() <1){
             return true;
         }
         return  false;

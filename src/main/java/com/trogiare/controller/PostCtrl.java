@@ -44,7 +44,7 @@ public class PostCtrl {
     }
 
     @RequestMapping(path="/filter",method = RequestMethod.GET)
-    @ApiOperation(value = "get all product and filter", response = MessageResp.class)
+    @ApiOperation(value = "get all post and filter", response = MessageResp.class)
     public HttpEntity<?> getAllPost(@RequestParam(required = false) Integer page ,
                                     @RequestParam(required = false) Integer size,
                                     @RequestParam(required = false,name = "type") PostTypeEnum type,
@@ -68,17 +68,24 @@ public class PostCtrl {
         return ResponseEntity.ok().body(messageResp);
     }
     @RequestMapping(path="/get-post-by-id/{postId}",method = RequestMethod.GET)
-    @ApiOperation(value = "Get Product By Id", response = MessageResp.class)
+    @ApiOperation(value = "Get post By Id", response = MessageResp.class)
     public HttpEntity<?> getPostById(@PathVariable(value="postId") String postId,HttpServletRequest request){
         MessageResp messageResp = postService.getPostById(request,postId);
         return ResponseEntity.ok().body(messageResp);
     }
     @RequestMapping(path="/delete-post-by-list-id",method = RequestMethod.PUT)
-    @ApiOperation(value = "Delete Product", response = MessageResp.class)
+    @ApiOperation(value = "Delete post", response = MessageResp.class)
     public HttpEntity<?> deletePostById(@RequestBody PostPayloadDelete payload){
         MessageResp messageResp = postService.deletePostByIds(payload.getPostIds());
         return ResponseEntity.ok().body(messageResp);
     }
+    @RequestMapping(path="",method = RequestMethod.PUT)
+    @ApiOperation(value = "update post", response = MessageResp.class)
+    public HttpEntity<?> updatePost(@Valid @ModelAttribute PostPayload payload) throws IOException {
+        MessageResp messageResp = postService.updatePost(payload);
+        return ResponseEntity.ok().body(messageResp);
+    }
+
 //    @RequestMapping(path="/test",method = RequestMethod.POST)
 //    public HttpEntity<?> test(@RequestBody Message message){
 //        ConverStation converStation = new ConverStation();
