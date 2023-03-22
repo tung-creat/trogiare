@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,6 +40,18 @@ public class GcsService {
         fileSystem.setCreatedTime(LocalDateTime.now());
         fileSystem.setType("img/jpeg");
         return fileSystem;
+    }
+    public  String storeFileNewsWithHtml(String html,String path) throws IOException {
+        path = path+TokenUtil.generateToken(10) + ".html";
+        BlobId blobId = BlobId.of(BUCKKET_NAME,path);
+        // Create a BlobInfo object to specify the metadata for the file
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/html").build();
+
+        // Read the contents of the HTML file into a string
+        String htmlContents = html;
+        storage.create(blobInfo, htmlContents.getBytes());
+        return path;
+
     }
 
     public byte[] downloadFile( String path) {

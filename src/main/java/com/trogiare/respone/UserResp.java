@@ -10,6 +10,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -30,7 +31,7 @@ public class UserResp implements Serializable {
     private LocalDateTime createdTime;
     private LocalDateTime updatedTime;
     private String token;
-    private List<String> roles;
+    private List<String> roles = new ArrayList<>();
     public void setUser(User user) {
         this.id = user.getId();
         this.firstName = user.getFirstName();

@@ -16,6 +16,7 @@ import com.trogiare.utils.HandleStringAndNumber;
 import com.trogiare.utils.TokenUtil;
 import com.trogiare.utils.UserUtil;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Authorization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,7 @@ public class NewsCtrl {
 
     @Transactional
     @RequestMapping(path = "/upload-image-news", method = RequestMethod.POST)
+    @Authorization("ADMIN")
     @ApiOperation(value = "upload image blog then get url image", response = MessageResp.class)
     public HttpEntity<?> uploadImage(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws IOException {
         if (!(file.getContentType().equals(MediaType.IMAGE_PNG_VALUE) ||
@@ -62,11 +64,12 @@ public class NewsCtrl {
     }
     @RequestMapping(path="",method = RequestMethod.POST)
     @ApiOperation(value = "add news ", response = MessageResp.class)
+    @Authorization("ADMIN")
     public HttpEntity<?> addNews(@Valid @ModelAttribute NewsPayload newsPayload) throws IOException {
-        UserUtil.checkAuthorize("ADMIN","WRITER");
         MessageResp messageResp = newsService.addNews(newsPayload);
         return ResponseEntity.ok(messageResp);
     }
+
     @RequestMapping(path="",method = RequestMethod.PUT)
     @ApiOperation(value = "update news ",response = MessageResp.class)
     public HttpEntity<?> updateNews(@Valid @ModelAttribute NewsPayload newsPayload,HttpServletRequest request) throws IOException {
@@ -91,7 +94,7 @@ public class NewsCtrl {
     public HttpEntity<?> getAllNews(@RequestParam(required = false) String keyword,
                                     @RequestParam(required = false) LocalDate timeStart,
                                     @RequestParam(required = false) LocalDate timeEnd,
-                                    @RequestParam(required = false) String topic,
+                                    @RequestParam(required = false) String category,
                                     @RequestParam(required = false) Integer size,
                                     @RequestParam(required = false) Integer page,
                                     HttpServletRequest request){
@@ -101,9 +104,8 @@ public class NewsCtrl {
         if(size == null){
             size =  Constants.ITEM_PER_PAGE;
         }
-        MessageResp messageResp = newsService.getAllNewsByFilter(keyword,timeStart,timeEnd,topic,size,page,request);
+        MessageResp messageResp = newsService.getAllNewsByFilter(keyword,timeStart,timeEnd,category,size,page,request);
         return  ResponseEntity.ok().body(messageResp);
     }
-
 
 }

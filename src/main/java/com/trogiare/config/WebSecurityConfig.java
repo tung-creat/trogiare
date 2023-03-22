@@ -37,25 +37,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     static final Logger logger = LoggerFactory.getLogger(WebSecurityConfig.class);
     @Autowired
     private OAuthEntryPointRest unauthorizedHandler;
-//    @Value("${app.cors.allow_domain}")
-//    private List<String> allowedDomain1;
-//    @Value("${app.cors.allow_domain_deploy}")
-//    private String allowedDomain2;
     @Autowired
     private LocalTokenAuth localTokenAuth;
-
-//    @Bean
-//    public WebMvcConfigurer corsConfigurer() {
-//        return new WebMvcConfigurer() {
-//            @Override
-//            public void addCorsMappings(CorsRegistry registry) {
-//                registry.addMapping("/**").allowedOrigins(allowedDomain2)
-//                        .allowCredentials(true);
-//                registry.addMapping("/**").allowedOrigins(allowedDomain1)
-//                        .allowCredentials(true);
-//            }
-//        };
-//    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
@@ -78,6 +61,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login/**",
                         "/api/v1/login/**",
                         "/api/v1/auth/**",
+                        "/file/**",
                         "/logout/**",
                         "/api/v1/reg/**",
                         "/api/v1/file/**",

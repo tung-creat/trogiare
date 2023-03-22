@@ -1,5 +1,6 @@
 package com.trogiare.payload.news;
 
+import com.trogiare.common.enumrate.CategoriesNewsEnum;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,8 +18,8 @@ public class NewsPayload {
     private String shortDescription;
     @NotBlank(message = "content not blank")
     private String content;
-    @NotBlank(message = "topic not blank")
-    private String topic;
+    @NotNull(message = "category is not null")
+    private CategoriesNewsEnum category;
     private MultipartFile imageAvatar;
     private String linkImageBeDelete;
 

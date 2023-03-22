@@ -1,5 +1,8 @@
 package com.trogiare.respone;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.trogiare.common.enumrate.CategoriesNewsEnum;
 import com.trogiare.common.enumrate.NewsStatusEnum;
 import com.trogiare.dto.NewsDto;
 import com.trogiare.model.News;
@@ -14,16 +17,18 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class NewsResp {
     private String id;
     private String authorId;
     private String title;
     private String metaTitle;
     private String shortDescription;
-    private String content;
+    private String path;
     private LocalDateTime createdTime;
     private LocalDateTime updatedTime;
-    private String topic;
+    private CategoriesNewsEnum category;
     private NewsStatusEnum statusNews;
     String imageAvatar;
     public NewsResp(News news){
@@ -34,9 +39,9 @@ public class NewsResp {
         this.shortDescription = news.getShortDescription();
         this.createdTime = news.getCreatedTime();
         this.updatedTime = news.getUpdatedTime();
-        this.topic = news.getTopic();
+        this.category = news.getCategory();
+        this.path = news.getPath();
         this.statusNews = news.getStatusNews();
-        this.content = news.getContent();
 
     }
     public NewsResp(NewsDto news){
@@ -47,7 +52,7 @@ public class NewsResp {
         this.shortDescription = news.getShortDescription();
         this.createdTime = news.getCreatedTime();
         this.updatedTime = news.getUpdatedTime();
-        this.topic = news.getTopic();
+        this.category = news.getCategory();
         this.statusNews = news.getStatusNews();
 
     }

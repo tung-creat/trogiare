@@ -46,14 +46,8 @@ public class LocalTokenProvider {
     public Claims getClaimFromToken(String authToken) {
         try {
             return Jwts.parserBuilder().setSigningKey(JWT_SECRET_KEY).build().parseClaimsJws(authToken).getBody();
-        } catch (MalformedJwtException ex) {
+        } catch (Exception ex) {
             logger.error("Invalid JWT token");
-        } catch (ExpiredJwtException ex) {
-            logger.error("Expired JWT token");
-        } catch (UnsupportedJwtException ex) {
-            logger.error("Unsupported JWT token");
-        } catch (IllegalArgumentException ex) {
-            logger.error("JWT claims string is empty.");
         }
         return null;
     }

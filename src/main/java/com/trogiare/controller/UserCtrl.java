@@ -2,8 +2,9 @@ package com.trogiare.controller;
 
 import com.trogiare.common.Constants;
 import com.trogiare.common.enumrate.ErrorCodesEnum;
+import com.trogiare.common.enumrate.ObjectMediaRefValueEnum;
+import com.trogiare.common.enumrate.ObjectTypeEnum;
 import com.trogiare.component.CompressFileComponent;
-import com.trogiare.component.ListRoleUserComponent;
 import com.trogiare.exception.BadRequestException;
 import com.trogiare.exception.InputInvalidException;
 import com.trogiare.model.FileSystem;
@@ -13,16 +14,21 @@ import com.trogiare.model.UserRole;
 import com.trogiare.payload.user.ChangePassword;
 import com.trogiare.payload.user.UserAddRolePayload;
 import com.trogiare.payload.user.UserFormPayload;
+import com.trogiare.repo.FileSystemRepo;
+import com.trogiare.repo.ObjectMediaRepo;
 import com.trogiare.repo.UserRepo;
 import com.trogiare.repo.UserRoleRepo;
 import com.trogiare.respone.MessageResp;
 import com.trogiare.respone.UserResp;
 import com.trogiare.service.EmailService;
 import com.trogiare.service.GcsService;
+import com.trogiare.utils.IdUtil;
 import com.trogiare.utils.TokenUtil;
 import com.trogiare.utils.UserUtil;
 import com.trogiare.utils.ValidateUtil;
+import com.trogiare.validate.ImageValidate;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Authorization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +39,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,6 +49,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -60,17 +68,20 @@ public class UserCtrl {
     @Autowired
     private EmailService mailSender;
     @Autowired
-    private ListRoleUserComponent userRoles;
+    private FileSystemRepo fileSystemRepo;
+    @Autowired
+    private ObjectMediaRepo objectMediaRepo;
+
     @Autowired
     private UserRoleRepo userRoleRepo;
     @Autowired
     private CompressFileComponent compressFileComponent;
 
+    @Authorization("ADMIN")
     @RequestMapping(path = "", method = RequestMethod.GET)
     @ApiOperation(value = "get ALl user", response = MessageResp.class)
     public HttpEntity<?> getAll(@RequestParam(required = false) Integer page,
                                 @RequestParam(required = false) Integer size) {
-        UserUtil.checkAuthorize("ADMIN");
         if (page == null || page <= 0) {
             page = 0;
         }
@@ -80,14 +91,22 @@ public class UserCtrl {
         Pageable pageable = PageRequest.of(page, size);
         Page<User> users = userRepo.findAll(pageable);
         List<User> userList = users.getContent();
-        List<UserResp> listUserResp = new ArrayList<>();
-        for (User x : userList) {
-            UserResp userResp = new UserResp();
-            userResp.setUser(x);
-            userResp.setRoles(userRoles.getRole(x.getId()).stream().map(userRole -> userRole.getRoleName()).collect(Collectors.toList()));
-            listUserResp.add(userResp);
-        }
+        Map<String, UserResp> userRespMap = userList.stream()
+                .collect(Collectors.toMap(
+                        user -> user.getId(), // key mapper
+                        user -> {
+                            UserResp userResp = new UserResp();
+                            userResp.setUser(user);
+                            return userResp;
+                        }// value mapper
 
+                ));
+        List<String> userIds = userList.stream().map(user -> user.getId()).collect(Collectors.toList());
+        List<UserRole> userRoleList = userRoleRepo.findByUserIdList(userIds);
+        for (UserRole x : userRoleList) {
+            userRespMap.get(x.getUserId()).getRoles().add(x.getRoleName());
+        }
+        List<UserResp> listUserResp = new ArrayList<>(userRespMap.values());
         return ResponseEntity.ok(MessageResp.page(users, listUserResp));
     }
 
@@ -103,17 +122,16 @@ public class UserCtrl {
         userRole.setUserId(payload.getUserId());
         userRole.setRoleName(payload.getRole().name());
         userRoleRepo.save(userRole);
-        userRoles.addRole(userRole);
         return ResponseEntity.ok().body(MessageResp.ok());
     }
 
-    @RequestMapping(path = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(path = "/get-user-by-id/{uid}", method = RequestMethod.GET)
     @ApiOperation(value = "get user by id", response = MessageResp.class)
-    public HttpEntity<Object> getById(@PathVariable("id") String id, HttpServletRequest request) {
-        if (ValidateUtil.isEmpty(id)) {
+    public HttpEntity<Object> getById(@PathVariable("uid") String uid, HttpServletRequest request) {
+        if (ValidateUtil.isEmpty(uid)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(MessageResp.error(ErrorCodesEnum.INVALID_ID));
         }
-        Optional<User> opUser = userRepo.findById(id);
+        Optional<User> opUser = userRepo.findById(uid);
         if (!opUser.isPresent()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(MessageResp.error(ErrorCodesEnum.INVALID_ID));
         }
@@ -121,7 +139,8 @@ public class UserCtrl {
         User user = opUser.get();
         UserResp userResp = new UserResp();
         userResp.setUser(user);
-        userResp.setAvatar(new StringBuilder(authority).append("/").append(user.getAvatar()).toString());
+        String path = objectMediaRepo.getPathImageAvatarFromObjectId(uid, ObjectMediaRefValueEnum.AVATAR.name());
+        userResp.setAvatar(new StringBuilder(authority).append("/" + path).toString());
         return ResponseEntity.ok(MessageResp.ok(userResp));
     }
 
@@ -129,33 +148,27 @@ public class UserCtrl {
     @ApiOperation(value = "update user", response = MessageResp.class)
     public HttpEntity<Object> updateUser(@Valid @ModelAttribute UserFormPayload payload) throws IOException {
         String uid = UserUtil.getUserId();
-        Optional<User> userOp = userRepo.getUserExists(payload.getUsername(), payload.getSdt(), payload.getEmail());
-        User user = userOp.get();
-        if (!user.getId().equals(uid)) {
-            if (user.getEmail().equals(payload.getEmail())) {
-                throw new BadRequestException(ErrorCodesEnum.EMAIL_EXIST);
-            }
-            if (user.getSdt().equals(payload.getSdt())) {
-                throw new BadRequestException(ErrorCodesEnum.SDT_EXIST);
-            }
-            if (user.getUsername().equals(payload.getUsername())) {
-                throw new BadRequestException(ErrorCodesEnum.USERNAME_EXIST);
-            }
-        }
-        userOp = userRepo.findById(uid);
+        Optional<User> userOp = userRepo.findById(uid);
         FileSystem fileSystem = new FileSystem();
-        if (payload.getAvatar() != null) {
-            String path = new StringBuilder(PATH_IMAGE_AVATAR).append("/" + TokenUtil.generateToken(20)).toString();
-            fileSystem = gcsService.storeImage(compressFileComponent.compressImage(payload.getAvatar(),1.5f), path);
+        if (!ValidateUtil.isEmpty(payload.getAvatar()) && ImageValidate.isImage(payload.getAvatar())) {
+            String pathImageAvatar = objectMediaRepo.getPathImageAvatarFromObjectId(uid, ObjectMediaRefValueEnum.AVATAR.name());
+            if(pathImageAvatar != null){
+                gcsService.deleteFile(pathImageAvatar);
+            }
+            String path = new StringBuilder(PATH_IMAGE_AVATAR).append("/" + TokenUtil.generateToken(20) + uid).toString();
+            fileSystem = gcsService.storeImage(compressFileComponent.compressImage(payload.getAvatar(), 1.5f), path);
+            ObjectMedia objectMedia = new ObjectMedia();
+            objectMedia.setObjectType(ObjectTypeEnum.USER.name());
+            objectMedia.setMediaId(fileSystem.getId());
+            objectMedia.setRefType(ObjectMediaRefValueEnum.AVATAR.name());
+            objectMedia.setObjectId(uid);
+            fileSystemRepo.save(fileSystem);
+            objectMediaRepo.save(objectMedia);
         }
-        user = userOp.get();
-        user.setSdt(payload.getSdt());
+        User user = userOp.get();
         user.setLastName(payload.getLastName());
         user.setUpdatedTime(LocalDateTime.now());
-        user.setUsername(payload.getUsername());
-        user.setEmail(payload.getEmail());
-        user.setFirstName(user.getFirstName());
-        user.setAvatar(fileSystem.getPath());
+        user.setFirstName(payload.getFirstName());
         userRepo.save(user);
         return ResponseEntity.ok().body(MessageResp.ok());
     }
@@ -163,10 +176,10 @@ public class UserCtrl {
     @RequestMapping(path = "/change-password", method = RequestMethod.PUT)
     @ApiOperation(value = "User do change their password", response = MessageResp.class)
     public HttpEntity<Object> changePassword(@Valid @RequestBody ChangePassword payload) {
-        if(payload.getPassword().equals(payload.getNewPassword())){
+        if (payload.getPassword().equals(payload.getNewPassword())) {
             throw new InputInvalidException("passsword can't equals new Password");
         }
-        if(!payload.getNewPassword().equals(payload.getReTypePassword())){
+        if (!payload.getNewPassword().equals(payload.getReTypePassword())) {
             throw new InputInvalidException("passsword not equals repassword");
         }
         String userId = UserUtil.getUserId();

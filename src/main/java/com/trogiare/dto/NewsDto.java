@@ -1,5 +1,6 @@
 package com.trogiare.dto;
 
+import com.trogiare.common.enumrate.CategoriesNewsEnum;
 import com.trogiare.common.enumrate.NewsStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,6 +19,6 @@ public class NewsDto {
     private String shortDescription;
     private LocalDateTime createdTime;
     private LocalDateTime updatedTime;
-    private String topic;
+    private CategoriesNewsEnum category;
     private NewsStatusEnum statusNews;
 }

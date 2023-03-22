@@ -42,7 +42,6 @@ public class User implements Serializable {
     private String sdt;
     private String password;
     private String status;
-    private String avatar;
     @Column(name ="created_time",nullable = false)
     private LocalDateTime createdTime;
     @Column(name="updated_time",nullable = false)

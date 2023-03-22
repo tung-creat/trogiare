@@ -70,7 +70,7 @@ public class UserRegisterCtrl {
             if(user.getUsername().equals(payload.getUserName())){
                 throw new BadRequestException(ErrorCodesEnum.USERNAME_EXIST);
             }
-        }
+       }
         User user = new User();
         user.setUsername(payload.getUserName());
         user.setCreatedTime(LocalDateTime.now());
@@ -140,7 +140,7 @@ public class UserRegisterCtrl {
     @ApiOperation(value = "resend confim ", response = MessageResp.class)
     public HttpEntity<Object> resendEmailConfirm(@RequestHeader(value = "Referer", required = false) String referer,@Valid @RequestBody ForgotPasswordPayload payload) throws MessagingException, URISyntaxException {
         String email = payload.getEmail();
-        Optional<User> opUser = userRepo.findByUsernameOrEmail(email);
+        Optional<User> opUser = userRepo.findByEmail(email);
         if (!opUser.isPresent()) {
             log.info("NOT valid user Email-ID, This email does NOT exist");
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -168,10 +168,7 @@ public class UserRegisterCtrl {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(MessageResp.error(ErrorCodesEnum.AUTHENTICATION_REQUEST_EXCEEDED));
         }
-
         //update new status for token lastest request
-
-
         //save Token to Database
         String authToken = TokenUtil.generateToken(64);
         UserToken userToken = new UserToken();

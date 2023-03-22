@@ -1,6 +1,7 @@
 package com.trogiare.controller;
 
 import com.trogiare.common.Constants;
+import com.trogiare.exception.InputInvalidException;
 import com.trogiare.model.ConverStation;
 import com.trogiare.model.Message;
 import com.trogiare.repo.ConverStationRepo;
@@ -115,6 +116,9 @@ public class MessageCtrl {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
         Page<Message> messagePage = messageRepo.findLatestMessages(uid, uidConnect, pageable);
         List<Message> messageList = messagePage.getContent();
+        if(ValidateUtil.isEmpty(messageList)){
+            return ResponseEntity.ok().body(MessageResp.ok());
+        }
         List<Object[]> objects = userRepo.getInformationUserByListUid(List.of(uidConnect));
         ConverStationMessageResp converStationMessageResp = new ConverStationMessageResp();
         for (Object[] x : objects) {
