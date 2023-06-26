@@ -1,33 +1,24 @@
 package com.trogiare.config;
 
+import com.trogiare.oauth.OAuth2LogginSuccessHanlder;
 import com.trogiare.security.LocalTokenAuth;
 import com.trogiare.security.OAuthEntryPointRest;
+import com.trogiare.oauth.CustomOAuth2UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.BeanIds;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -39,6 +30,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private OAuthEntryPointRest unauthorizedHandler;
     @Autowired
     private LocalTokenAuth localTokenAuth;
+    @Autowired
+    private CustomOAuth2UserService userService;
+    @Autowired
+    private OAuth2LogginSuccessHanlder oAuth2LogginSuccessHanlder;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
@@ -67,7 +62,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/v1/file/**",
                         "/api/v1/socks/**",
                         "/api/v1/provinces/**",
-                        "/image/**"
+                        "/image/**",
+                        "/api/v1/message/**"
                 ).permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
                 .antMatchers(HttpMethod.GET,"/api/v1/users/**").permitAll()
@@ -77,6 +73,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/v2/api-docs",
                         "/webjars/**").permitAll()
                 .antMatchers("/api/v1/**").authenticated()
+                .and()
+                .oauth2Login()
+                    .userInfoEndpoint()
+                    .userService(userService)
+                    .and()
+                    .successHandler(oAuth2LogginSuccessHanlder)
                 .and()
                 .addFilterBefore(localTokenAuth, UsernamePasswordAuthenticationFilter.class);
     }

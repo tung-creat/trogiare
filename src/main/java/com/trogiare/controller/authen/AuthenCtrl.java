@@ -1,4 +1,4 @@
-package com.trogiare.controller;
+package com.trogiare.controller.authen;
 
 import com.trogiare.common.enumrate.ErrorCodesEnum;
 import com.trogiare.common.enumrate.UserStatusEnum;
@@ -19,6 +19,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +34,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthenCtrl {
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
     @Autowired
     private UserRepo userRepo;
     @Autowired
@@ -65,6 +68,7 @@ public class AuthenCtrl {
         userResp.setUser(user);
         userResp.setRoles(userRole.stream().map(e ->e.getRoleName() ).collect(Collectors.toList()));
         userResp.setToken(token);
+        simpMessagingTemplate.convertAndSendToUser(payload.getUserName(), "/private", userResp);
         return ResponseEntity.ok().body(MessageResp.ok(userResp));
     }
 }

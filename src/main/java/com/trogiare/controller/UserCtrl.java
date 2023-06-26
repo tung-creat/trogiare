@@ -29,6 +29,7 @@ import com.trogiare.utils.ValidateUtil;
 import com.trogiare.validate.ImageValidate;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
